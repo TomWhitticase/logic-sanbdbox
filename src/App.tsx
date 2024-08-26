@@ -17,9 +17,11 @@ import {
   useEdgesState,
   useNodesState,
 } from "@xyflow/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import "@xyflow/react/dist/style.css";
+import { LocalStorageHandler } from "./components/local-storage-handler";
+import { Help } from "./components/menus/help";
 import NodeContextMenu, {
   NodeContextMenuProps,
 } from "./components/menus/node-context-menu";
@@ -27,9 +29,6 @@ import NodeMenu from "./components/menus/node-menu";
 import SelectionDisplay from "./components/menus/selection-display";
 import edgeTypes from "./constants/edgeTypes";
 import nodeTypes from "./constants/nodeTypes";
-import { Help } from "./components/menus/help";
-import { localStorageKeys } from "./constants/local-storage-keys";
-import { LocalStorageHandler } from "./components/local-storage-handler";
 
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
