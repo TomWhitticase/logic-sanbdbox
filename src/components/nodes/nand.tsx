@@ -18,7 +18,7 @@ const Nand: React.FC<NodeProps<Node>> = (props) => {
   const outputValue = !(inputA && inputB);
 
   useEffect(() => {
-    updateSourceHandleValue("sourceHandle", outputValue);
+    updateSourceHandleValue("output", outputValue);
   }, [outputValue, id]);
 
   return (
@@ -30,7 +30,7 @@ const Nand: React.FC<NodeProps<Node>> = (props) => {
               state={inputA}
               type="target"
               position={Position.Left}
-              id="targetHandleA"
+              id="inputA"
             />
           </div>
           <div className="absolute bottom-3">
@@ -38,7 +38,7 @@ const Nand: React.FC<NodeProps<Node>> = (props) => {
               state={inputB}
               type="target"
               position={Position.Left}
-              id="targetHandleB"
+              id="inputB"
             />
           </div>
         </div>
@@ -49,7 +49,7 @@ const Nand: React.FC<NodeProps<Node>> = (props) => {
           state={outputValue}
           type="source"
           position={Position.Right}
-          id="sourceHandle"
+          id="output"
         />
       </div>
     </NodeWrapper>

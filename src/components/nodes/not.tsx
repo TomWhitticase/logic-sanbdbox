@@ -11,12 +11,12 @@ import NodeWrapper from "./node-wrapper";
 const Not: React.FC<NodeProps<Node>> = (props) => {
   const { id } = props;
 
-  const input = useInputValue("inputA");
+  const input = useInputValue("input");
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
 
   useEffect(() => {
-    updateSourceHandleValue("sourceHandle", !input);
+    updateSourceHandleValue("output", !input);
   }, [input]);
 
   return (
@@ -25,7 +25,7 @@ const Not: React.FC<NodeProps<Node>> = (props) => {
         state={input}
         type="target"
         position={Position.Left}
-        id="targetHandle"
+        id="input"
       />
       <Container>
         <img src={NotIcon} style={{ width: styleConstants.nodeIconSize }} />
@@ -34,7 +34,7 @@ const Not: React.FC<NodeProps<Node>> = (props) => {
         state={!input}
         type="source"
         position={Position.Right}
-        id="sourceHandle"
+        id="output"
       />
     </NodeWrapper>
   );

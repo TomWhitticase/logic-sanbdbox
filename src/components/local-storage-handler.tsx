@@ -11,22 +11,23 @@ export const LocalStorageHandler: React.FC = () => {
   const { setNodes, setEdges } = useReactFlow();
 
   useEffect(() => {
-    const storedNodes = localStorage.getItem(localStorageKeys.nodes);
-    const storedEdges = localStorage.getItem(localStorageKeys.edges);
+    const storedFlow = localStorage.getItem(localStorageKeys.flow);
 
-    if (storedNodes) {
-      setNodes(JSON.parse(storedNodes));
+    if (storedFlow) {
+      const parsedFlow = JSON.parse(storedFlow);
+      setNodes(parsedFlow.nodes);
+      setEdges(parsedFlow.edges);
     }
-    if (storedEdges) {
-      setEdges(JSON.parse(storedEdges));
-    }
+
     setInitialised(true);
   }, [setNodes, setEdges]);
 
   useEffect(() => {
     if (!initialised) return;
-    localStorage.setItem(localStorageKeys.nodes, JSON.stringify(nodes));
-    localStorage.setItem(localStorageKeys.edges, JSON.stringify(edges));
+    localStorage.setItem(
+      localStorageKeys.flow,
+      JSON.stringify({ nodes, edges })
+    );
   }, [nodes, edges, initialised]);
 
   return <></>;

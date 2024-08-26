@@ -17,7 +17,8 @@ const Clock = (
 
   const { updateNodeData } = useReactFlow();
 
-  const isOn = useInputValue("input");
+  const input = useInputValue("input");
+  const isOn = !input;
 
   const intervalPeriod = data.intervalPeriod || 1000;
 
@@ -41,7 +42,7 @@ const Clock = (
   return (
     <NodeWrapper {...props}>
       <NodeHandle
-        state={!isOn}
+        state={input}
         type="target"
         position={Position.Left}
         id="input"
@@ -56,7 +57,13 @@ const Clock = (
         <div className="flex flex-col items-center justify-center">
           <FiClock
             size={styleConstants.nodeIconSize}
-            color={isOn ? (outputValue ? "orange" : "black") : "gray"}
+            color={
+              isOn
+                ? outputValue
+                  ? styleConstants.activeColor
+                  : styleConstants.inactiveColor
+                : styleConstants.disabledColor
+            }
           />
           <div className="flex items-center justify-center gap-1">
             <button

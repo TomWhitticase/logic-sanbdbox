@@ -15,7 +15,7 @@ const Demultiplexer: React.FC<NodeProps<Node>> = (props) => {
   const inputControlA = useInputValue("inputControlA");
   const inputControlB = useInputValue("inputControlB");
 
-  const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
+  const { updateAllSourceHandleValues } = useUpdateSourceHandleValues(id);
 
   // Get multiplexer output value based on control handle values
   const outputValues = {
@@ -31,17 +31,13 @@ const Demultiplexer: React.FC<NodeProps<Node>> = (props) => {
   const outputValueD = !!(outputValues && outputValues[3]);
 
   useEffect(() => {
-    updateSourceHandleValue("outputA", !!outputValueA);
-  }, [id, outputValueA]);
-  useEffect(() => {
-    updateSourceHandleValue("outputB", !!outputValueB);
-  }, [id, outputValueB]);
-  useEffect(() => {
-    updateSourceHandleValue("outputC", !!outputValueC);
-  }, [id, outputValueC]);
-  useEffect(() => {
-    updateSourceHandleValue("outputD", !!outputValueD);
-  }, [id, outputValueD]);
+    updateAllSourceHandleValues([
+      { id: "outputA", value: !!outputValueA },
+      { id: "outputB", value: !!outputValueB },
+      { id: "outputC", value: !!outputValueC },
+      { id: "outputD", value: !!outputValueD },
+    ]);
+  }, [outputValueA, outputValueB, outputValueC, outputValueD]);
 
   return (
     <NodeWrapper {...props}>

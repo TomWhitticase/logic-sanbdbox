@@ -22,7 +22,9 @@ const Bulb: React.FC<NodeProps<Node<NodeData>>> = (props) => {
         <div>
           <IoBulbOutline
             size={styleConstants.nodeIconSize}
-            color={isOn ? "orange" : "black"}
+            color={
+              isOn ? styleConstants.activeColor : styleConstants.inactiveColor
+            }
           />
         </div>
       </Container>

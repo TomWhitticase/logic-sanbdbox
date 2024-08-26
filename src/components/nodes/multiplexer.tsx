@@ -30,7 +30,7 @@ const Multiplexer: React.FC<NodeProps<Node>> = (props) => {
     }[[inputControlA, inputControlB].join(",")] ?? false;
 
   useEffect(() => {
-    updateSourceHandleValue("sourceHandle", outputValue);
+    updateSourceHandleValue("output", outputValue);
   }, [outputValue, id]);
 
   return (

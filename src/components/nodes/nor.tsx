@@ -18,7 +18,7 @@ const Nor: React.FC<NodeProps<Node>> = (props) => {
   const outputValue = !(inputA || inputB);
 
   useEffect(() => {
-    updateSourceHandleValue("sourceHandle", outputValue);
+    updateSourceHandleValue("output", outputValue);
   }, [outputValue, id]);
 
   return (

@@ -1,4 +1,5 @@
 import {
+  Node,
   BaseEdge,
   Edge,
   EdgeProps,
@@ -57,10 +58,10 @@ const Wire: React.FC<EdgeProps<Edge>> = ({
   targetPosition,
   sourceHandleId,
 }) => {
-  const sourceNode = useNodesData(source);
-  const targetNode = useNodesData(target);
-  const sourceRotation = (sourceNode?.data.rotation || 0) as number;
-  const targetRotation = (targetNode?.data.rotation || 0) as number;
+  const sourceNode = useNodesData<Node<NodeData>>(source);
+  const targetNode = useNodesData<Node<NodeData>>(target);
+  const sourceRotation = sourceNode?.data.rotation || 0;
+  const targetRotation = targetNode?.data.rotation || 0;
 
   const [edgePath] = getSmoothStepPath({
     sourceX: sourceX - xOffset,
@@ -69,10 +70,10 @@ const Wire: React.FC<EdgeProps<Edge>> = ({
     targetY,
     sourcePosition: adjustPositionForRotation(sourcePosition, sourceRotation),
     targetPosition: adjustPositionForRotation(targetPosition, targetRotation),
-    borderRadius: 10,
+    borderRadius: 4,
   });
 
-  const isOn = (sourceNode?.data as NodeData).sourceHandleValues.find(
+  const isOn = sourceNode?.data.sourceHandleValues.find(
     (v) => v.id === sourceHandleId
   )?.value;
 
@@ -82,7 +83,9 @@ const Wire: React.FC<EdgeProps<Edge>> = ({
         id={id}
         path={edgePath}
         style={{
-          stroke: isOn ? "orange" : "black",
+          stroke: isOn
+            ? styleConstants.activeColor
+            : styleConstants.inactiveColor,
           strokeWidth: 2,
         }}
       />

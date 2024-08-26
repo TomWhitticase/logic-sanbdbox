@@ -34,7 +34,11 @@ const PushButton = (props: NodeProps<Node<NodeData>>) => {
       />
       <Container>
         <IoMdRadioButtonOn
-          color={buttonValue ? "orange" : "black"}
+          color={
+            buttonValue
+              ? styleConstants.activeColor
+              : styleConstants.inactiveColor
+          }
           size={styleConstants.nodeIconSize}
           onClick={buttonValue ? undefined : () => handlePushButton()}
         />
