@@ -16,6 +16,7 @@ import Multiplexer from "../components/nodes/multiplexer";
 import Demultiplexer from "../components/nodes/demultiplexer";
 import PushButton from "../components/nodes/push-button";
 import DFlipFlop from "../components/nodes/d-flip-flop";
+import FullAdder from "../components/nodes/full-adder";
 
 const nodeTypes: NodeTypes = {
   Bulb,
@@ -35,5 +36,6 @@ const nodeTypes: NodeTypes = {
   Multiplexer,
   Demultiplexer,
   DFlipFlop,
+  FullAdder,
 } as const;
 export default nodeTypes;

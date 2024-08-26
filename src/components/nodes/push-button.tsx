@@ -12,27 +12,31 @@ const pushButtonTime = 200;
 const PushButton = (props: NodeProps<Node<NodeData>>) => {
   const { id, data } = props;
 
-  const switchValue = data.sourceHandleValues.find(
-    (v) => v.id == "switchValue"
-  )?.value;
+  const buttonValue =
+    data.sourceHandleValues.find((v) => v.id == "outputValue")?.value ?? false;
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
 
   const handlePushButton = () => {
-    updateSourceHandleValue("switchValue", true);
+    updateSourceHandleValue("outputValue", true);
     setTimeout(() => {
-      updateSourceHandleValue("switchValue", false);
+      updateSourceHandleValue("outputValue", false);
     }, pushButtonTime);
   };
 
   return (
     <NodeWrapper {...props}>
-      <NodeHandle type="source" position={Position.Right} id={"switchValue"} />
+      <NodeHandle
+        state={buttonValue}
+        type="source"
+        position={Position.Right}
+        id={"outputValue"}
+      />
       <Container>
         <IoMdRadioButtonOn
-          color={switchValue ? "orange" : "black"}
+          color={buttonValue ? "orange" : "black"}
           size={styleConstants.nodeIconSize}
-          onClick={switchValue ? undefined : () => handlePushButton()}
+          onClick={buttonValue ? undefined : () => handlePushButton()}
         />
       </Container>
     </NodeWrapper>

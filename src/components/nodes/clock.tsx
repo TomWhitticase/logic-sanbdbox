@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { FiClock } from "react-icons/fi";
 import { styleConstants } from "../../constants/styleConstants";
-import { useTargetHandleValues } from "../../hooks/use-target-handle-values";
+import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { NodeData } from "../../types/node-data";
 import { Container } from "../common/container";
@@ -17,24 +17,22 @@ const Clock = (
 
   const { updateNodeData } = useReactFlow();
 
-  const inputValues = useTargetHandleValues("targetHandle");
-  const isOn = !inputValues.some((v) => v);
+  const isOn = useInputValue("input");
 
   const intervalPeriod = data.intervalPeriod || 1000;
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
 
-  const outputValue = data.sourceHandleValues.find(
-    (v) => v.id === "sourceHandle"
-  )?.value;
+  const outputValue =
+    data.sourceHandleValues.find((v) => v.id === "output")?.value ?? false;
 
   useEffect(() => {
     if (!isOn) {
-      updateSourceHandleValue("sourceHandle", false);
+      updateSourceHandleValue("output", false);
       return;
     }
     const intervalId = setInterval(() => {
-      updateSourceHandleValue("sourceHandle", !outputValue);
+      updateSourceHandleValue("output", !outputValue);
     }, intervalPeriod);
 
     return () => clearInterval(intervalId);
@@ -42,8 +40,18 @@ const Clock = (
 
   return (
     <NodeWrapper {...props}>
-      <NodeHandle type="target" position={Position.Left} id="targetHandle" />
-      <NodeHandle type="source" position={Position.Right} id="sourceHandle" />
+      <NodeHandle
+        state={!isOn}
+        type="target"
+        position={Position.Left}
+        id="input"
+      />
+      <NodeHandle
+        state={outputValue}
+        type="source"
+        position={Position.Right}
+        id="output"
+      />
       <Container>
         <div className="flex flex-col items-center justify-center">
           <FiClock

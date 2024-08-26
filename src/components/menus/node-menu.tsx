@@ -31,6 +31,7 @@ import nodeTypes from "../../constants/nodeTypes";
 import demultiplexerIcon from "../../assets/demultiplexer-icon.svg";
 import multiplexerIcon from "../../assets/multiplexer-icon.svg";
 import dFlipFlopIcon from "../../assets/d-flip-flop-icon.svg";
+import fullAdderIcon from "../../assets/full-adder-icon.svg";
 import { styleConstants } from "../../constants/styleConstants";
 import { loadFromDevice, saveToDevice } from "../../utils/save-and-open-utils";
 import { Button } from "../common/button";
@@ -105,7 +106,7 @@ const NodeMenu: React.FC = () => {
                   </Button>
                 </div>
               </div>
-              <div className="overflow-y-scroll overflow-x-visible overflow-visible max-h-[500px]">
+              <div className="overflow-y-scroll overflow-x-visible overflow-visible max-h-[450px]">
                 <div className="flex flex-col">
                   <Title content="Inputs" />
                   <div className="flex flex-wrap items-start justify-start gap-1">
@@ -301,6 +302,17 @@ const NodeMenu: React.FC = () => {
                         icon: (
                           <img
                             src={dFlipFlopIcon}
+                            style={{ width: styleConstants.nodeIconSize }}
+                          />
+                        ),
+                      },
+                      {
+                        name: "FullAdder",
+                        tooltipLabel: "Full Adder",
+                        type: nodeTypes.FullAdder,
+                        icon: (
+                          <img
+                            src={fullAdderIcon}
                             style={{ width: styleConstants.nodeIconSize }}
                           />
                         ),

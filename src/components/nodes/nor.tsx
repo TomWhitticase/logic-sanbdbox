@@ -2,7 +2,7 @@ import { Node, NodeProps, Position } from "@xyflow/react";
 import React, { useEffect } from "react";
 import { TbLogicNor } from "react-icons/tb";
 import { styleConstants } from "../../constants/styleConstants";
-import { useTargetHandleValues } from "../../hooks/use-target-handle-values";
+import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
@@ -12,12 +12,10 @@ const Nor: React.FC<NodeProps<Node>> = (props) => {
   const { id } = props;
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
-  const targetHandleAValues = useTargetHandleValues("targetHandleA");
-  const targetHandleBValues = useTargetHandleValues("targetHandleB");
+  const inputA = useInputValue("inputA");
+  const inputB = useInputValue("inputB");
 
-  const outputValue = !(
-    targetHandleAValues.some((v) => v) || targetHandleBValues.some((v) => v)
-  );
+  const outputValue = !(inputA || inputB);
 
   useEffect(() => {
     updateSourceHandleValue("sourceHandle", outputValue);
@@ -29,23 +27,30 @@ const Nor: React.FC<NodeProps<Node>> = (props) => {
         <div className="relative flex flex-col">
           <div className="absolute top-3">
             <NodeHandle
+              state={inputA}
               type="target"
               position={Position.Left}
-              id="targetHandleA"
+              id="inputA"
             />
           </div>
           <div className="absolute bottom-3">
             <NodeHandle
+              state={inputB}
               type="target"
               position={Position.Left}
-              id="targetHandleB"
+              id="inputB"
             />
           </div>
         </div>
         <Container>
           <TbLogicNor size={styleConstants.nodeIconSize} />
         </Container>
-        <NodeHandle type="source" position={Position.Right} id="sourceHandle" />
+        <NodeHandle
+          state={outputValue}
+          type="source"
+          position={Position.Right}
+          id="output"
+        />
       </div>
     </NodeWrapper>
   );

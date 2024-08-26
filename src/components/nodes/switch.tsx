@@ -10,9 +10,8 @@ import NodeWrapper from "./node-wrapper";
 const Switch = (props: NodeProps<Node<NodeData>>) => {
   const { id, data } = props;
 
-  const switchValue = data.sourceHandleValues.find(
-    (v) => v.id == "switchValue"
-  )?.value;
+  const switchValue =
+    data.sourceHandleValues.find((v) => v.id == "switchValue")?.value ?? false;
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
 
@@ -22,7 +21,12 @@ const Switch = (props: NodeProps<Node<NodeData>>) => {
 
   return (
     <NodeWrapper {...props}>
-      <NodeHandle type="source" position={Position.Right} id={"switchValue"} />
+      <NodeHandle
+        state={switchValue}
+        type="source"
+        position={Position.Right}
+        id={"switchValue"}
+      />
       <Container>
         {switchValue ? (
           <PiToggleRightFill

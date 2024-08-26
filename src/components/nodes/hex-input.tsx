@@ -26,10 +26,10 @@ const getSourceHanldeValuesFromHexString = (value: string) => {
   };
   const valuesArray = map[value] ?? [false, false, false, false];
   return [
-    { id: "sourceHandleA", value: valuesArray[0] },
-    { id: "sourceHandleB", value: valuesArray[1] },
-    { id: "sourceHandleC", value: valuesArray[2] },
-    { id: "sourceHandleD", value: valuesArray[3] },
+    { id: "outputA", value: valuesArray[0] },
+    { id: "outputB", value: valuesArray[1] },
+    { id: "outputC", value: valuesArray[2] },
+    { id: "outputD", value: valuesArray[3] },
   ];
 };
 
@@ -59,6 +59,8 @@ const HexInput: React.FC<
     }));
   };
 
+  const outputStates = data.sourceHandleValues.map((h) => h.value);
+
   return (
     <NodeWrapper {...props}>
       <div className="flex">
@@ -75,30 +77,34 @@ const HexInput: React.FC<
         <div className="relative flex flex-col">
           <div className="absolute top-[20%]">
             <NodeHandle
+              state={outputStates[0]}
               type="source"
               position={Position.Right}
-              id="sourceHandleA"
+              id="outputA"
             />
           </div>
           <div className="absolute top-[40%]">
             <NodeHandle
+              state={outputStates[1]}
               type="source"
               position={Position.Right}
-              id="sourceHandleB"
+              id="outputB"
             />
           </div>
           <div className="absolute top-[60%]">
             <NodeHandle
+              state={outputStates[2]}
               type="source"
               position={Position.Right}
-              id="sourceHandleC"
+              id="outputC"
             />
           </div>
           <div className="absolute top-[80%]">
             <NodeHandle
+              state={outputStates[3]}
               type="source"
               position={Position.Right}
-              id="sourceHandleD"
+              id="outputD"
             />
           </div>
         </div>

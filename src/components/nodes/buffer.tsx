@@ -2,7 +2,7 @@ import { Node, NodeProps, Position } from "@xyflow/react";
 import React, { useEffect } from "react";
 import BufferIcon from "../../assets/buffer-icon.svg";
 import { styleConstants } from "../../constants/styleConstants";
-import { useTargetHandleValues } from "../../hooks/use-target-handle-values";
+import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { NodeData } from "../../types/node-data";
 import { Container } from "../common/container";
@@ -12,18 +12,22 @@ import NodeWrapper from "./node-wrapper";
 const Buffer: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id } = props;
 
-  const targetHandleValues = useTargetHandleValues("targetHandle");
-  const inputValue = targetHandleValues.some((v) => v);
+  const inputValue = useInputValue("input");
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
 
   useEffect(() => {
-    updateSourceHandleValue("sourceHandle", inputValue);
+    updateSourceHandleValue("output", inputValue);
   }, [inputValue]);
 
   return (
     <NodeWrapper {...props}>
-      <NodeHandle type="target" position={Position.Left} id="targetHandle" />
+      <NodeHandle
+        state={inputValue}
+        type="target"
+        position={Position.Left}
+        id="input"
+      />
       <Container>
         <img
           src={BufferIcon}
@@ -31,7 +35,12 @@ const Buffer: React.FC<NodeProps<Node<NodeData>>> = (props) => {
           style={{ width: styleConstants.nodeIconSize }}
         />
       </Container>
-      <NodeHandle type="source" position={Position.Right} id="sourceHandle" />
+      <NodeHandle
+        state={inputValue}
+        type="source"
+        position={Position.Right}
+        id="output"
+      />
     </NodeWrapper>
   );
 };

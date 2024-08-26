@@ -115,7 +115,7 @@ const SelectionDisplay = () => {
 
   return (
     <Panel position="top-right">
-      <div className="flex flex-col items-end justify-end">
+      <div className="flex flex-col items-end justify-end pt-10">
         {selectedNodes.length > 0 && (
           <span className="text-xs">Selected: {selectedNodes.length}</span>
         )}

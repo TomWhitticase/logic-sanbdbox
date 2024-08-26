@@ -1,24 +1,24 @@
 import { Node, NodeProps, Position } from "@xyflow/react";
 import React from "react";
-import { useTargetHandleValues } from "../../hooks/use-target-handle-values";
+import { useInputValue } from "../../hooks/use-target-handle-values";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
 
 const HexDisplay: React.FC<NodeProps<Node>> = (props) => {
-  const targetHandleAValues = useTargetHandleValues("targetHandleA");
-  const targetHandleBValues = useTargetHandleValues("targetHandleB");
-  const targetHandleCValues = useTargetHandleValues("targetHandleC");
-  const targetHandleDValues = useTargetHandleValues("targetHandleD");
+  const inputA = useInputValue("inputA");
+  const inputB = useInputValue("inputB");
+  const inputC = useInputValue("inputC");
+  const inputD = useInputValue("inputD");
 
   // Converting the node data to boolean values (true or false)
-  const valueA = targetHandleAValues.some((v) => v) ? 1 : 0;
-  const valueB = targetHandleBValues.some((v) => v) ? 1 : 0;
-  const valueC = targetHandleCValues.some((v) => v) ? 1 : 0;
-  const valueD = targetHandleDValues.some((v) => v) ? 1 : 0;
+  const inputABinary = inputA ? 1 : 0;
+  const inputBBinary = inputB ? 1 : 0;
+  const inoutCBinary = inputC ? 1 : 0;
+  const inputDBinary = inputD ? 1 : 0;
 
   // Convert the 4-bit binary input to a hexadecimal value
-  const binaryString = `${valueA}${valueB}${valueC}${valueD}`;
+  const binaryString = `${inputABinary}${inputBBinary}${inoutCBinary}${inputDBinary}`;
   const displayValue = parseInt(binaryString, 2).toString(16).toUpperCase();
 
   return (
@@ -27,30 +27,34 @@ const HexDisplay: React.FC<NodeProps<Node>> = (props) => {
         <div className="relative flex flex-col">
           <div className="absolute top-[20%]">
             <NodeHandle
+              state={inputA}
               type="target"
               position={Position.Left}
-              id="targetHandleA"
+              id="inputA"
             />
           </div>
           <div className="absolute top-[40%]">
             <NodeHandle
+              state={inputB}
               type="target"
               position={Position.Left}
-              id="targetHandleB"
+              id="inputB"
             />
           </div>
           <div className="absolute top-[60%]">
             <NodeHandle
+              state={inputC}
               type="target"
               position={Position.Left}
-              id="targetHandleC"
+              id="inputC"
             />
           </div>
           <div className="absolute top-[80%]">
             <NodeHandle
+              state={inputD}
               type="target"
               position={Position.Left}
-              id="targetHandleD"
+              id="inputD"
             />
           </div>
         </div>

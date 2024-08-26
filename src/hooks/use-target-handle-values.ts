@@ -1,6 +1,6 @@
 import { useHandleConnections, useNodesData } from "@xyflow/react";
 
-export const useTargetHandleValues = (
+export const useInputValue = (
   hanldeId: string | undefined,
   nodeId?: string
 ) => {
@@ -27,5 +27,5 @@ export const useTargetHandleValues = (
     })(),
   }));
 
-  return connectedHandles.map((h) => h.value || false);
+  return connectedHandles.map((h) => h.value || false).some((v) => v);
 };

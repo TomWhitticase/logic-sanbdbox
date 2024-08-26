@@ -2,7 +2,7 @@ import { Node, NodeProps, Position } from "@xyflow/react";
 import React, { useEffect } from "react";
 import demultiplexerIcon from "../../assets/demultiplexer-icon.svg";
 import { styleConstants } from "../../constants/styleConstants";
-import { useTargetHandleValues } from "../../hooks/use-target-handle-values";
+import { useInputValue } from "../../hooks/use-target-handle-values";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
@@ -10,46 +10,37 @@ import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handl
 
 const Demultiplexer: React.FC<NodeProps<Node>> = (props) => {
   const { id } = props;
-  const targetHandleAValues = useTargetHandleValues("targetHandle");
+  const input = useInputValue("input");
 
-  const targetHandleControlAValues = useTargetHandleValues(
-    "targetHandleControlA"
-  );
-  const targetHandleControlBValues = useTargetHandleValues(
-    "targetHandleControlB"
-  );
+  const inputControlA = useInputValue("inputControlA");
+  const inputControlB = useInputValue("inputControlB");
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
 
   // Get multiplexer output value based on control handle values
   const outputValues = {
-    "false,false": [targetHandleAValues.some((v) => v), false, false, false],
-    "false,true": [false, targetHandleAValues.some((v) => v), false, false],
-    "true,false": [false, false, targetHandleAValues.some((v) => v), false],
-    "true,true": [false, false, false, targetHandleAValues.some((v) => v)],
-  }[
-    [
-      targetHandleControlAValues.some((v) => v),
-      targetHandleControlBValues.some((v) => v),
-    ].join(",")
-  ];
+    "false,false": [input, false, false, false],
+    "false,true": [false, input, false, false],
+    "true,false": [false, false, input, false],
+    "true,true": [false, false, false, input],
+  }[[inputControlA, inputControlB].join(",")];
 
-  const outputValueA = outputValues && outputValues[0];
-  const outputValueB = outputValues && outputValues[1];
-  const outputValueC = outputValues && outputValues[2];
-  const outputValueD = outputValues && outputValues[3];
+  const outputValueA = !!(outputValues && outputValues[0]);
+  const outputValueB = !!(outputValues && outputValues[1]);
+  const outputValueC = !!(outputValues && outputValues[2]);
+  const outputValueD = !!(outputValues && outputValues[3]);
 
   useEffect(() => {
-    updateSourceHandleValue("sourceHandleA", !!outputValueA);
+    updateSourceHandleValue("outputA", !!outputValueA);
   }, [id, outputValueA]);
   useEffect(() => {
-    updateSourceHandleValue("sourceHandleB", !!outputValueB);
+    updateSourceHandleValue("outputB", !!outputValueB);
   }, [id, outputValueB]);
   useEffect(() => {
-    updateSourceHandleValue("sourceHandleC", !!outputValueC);
+    updateSourceHandleValue("outputC", !!outputValueC);
   }, [id, outputValueC]);
   useEffect(() => {
-    updateSourceHandleValue("sourceHandleD", !!outputValueD);
+    updateSourceHandleValue("outputD", !!outputValueD);
   }, [id, outputValueD]);
 
   return (
@@ -58,51 +49,58 @@ const Demultiplexer: React.FC<NodeProps<Node>> = (props) => {
         <div className="relative flex flex-col items-center justify-center w-14 h-14">
           <div className="absolute top-[20%] right-0">
             <NodeHandle
+              state={outputValueA}
               type="source"
               position={Position.Right}
-              id="sourceHandleA"
+              id="outputA"
             />
           </div>
           <div className="absolute top-[40%] right-0">
             <NodeHandle
+              state={outputValueB}
               type="source"
               position={Position.Right}
-              id="sourceHandleB"
+              id="outputB"
             />
           </div>
           <div className="absolute top-[60%] right-0">
             <NodeHandle
+              state={outputValueC}
               type="source"
               position={Position.Right}
-              id="sourceHandleC"
+              id="outputC"
             />
           </div>
           <div className="absolute top-[80%] right-0">
             <NodeHandle
+              state={outputValueD}
               type="source"
               position={Position.Right}
-              id="sourceHandleD"
+              id="outputD"
             />
           </div>
           <div className={`absolute left-[35%] bottom-0`}>
             <NodeHandle
+              state={inputControlA}
               type="target"
               position={Position.Bottom}
-              id="targetHandleControlA"
+              id="inputControlA"
             />
           </div>
           <div className="absolute right-[35%] bottom-0">
             <NodeHandle
+              state={inputControlB}
               type="target"
               position={Position.Bottom}
-              id="targetHandleControlB"
+              id="inputControlB"
             />
           </div>
           <div className="absolute left-0 top-[50%]">
             <NodeHandle
+              state={input}
               type="target"
               position={Position.Left}
-              id="targetHandle"
+              id="input"
             />
           </div>
           <img

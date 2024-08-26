@@ -27,14 +27,12 @@ import NodeMenu from "./components/menus/node-menu";
 import SelectionDisplay from "./components/menus/selection-display";
 import edgeTypes from "./constants/edgeTypes";
 import nodeTypes from "./constants/nodeTypes";
+import { Help } from "./components/menus/help";
+import { localStorageKeys } from "./constants/local-storage-keys";
+import { LocalStorageHandler } from "./components/local-storage-handler";
 
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
-
-const localStorageKeys = {
-  nodes: "flowNodes",
-  edges: "flowEdges",
-};
 
 const App = () => {
   const [nodes, setNodes] = useNodesState(initialNodes);
@@ -77,34 +75,34 @@ const App = () => {
     (params: Edge | Connection) =>
       setEdges((eds) => {
         const updatedEdges = addEdge({ ...params, type: "wire" }, eds);
-        localStorage.setItem(
-          localStorageKeys.edges,
-          JSON.stringify(updatedEdges)
-        );
+        // localStorage.setItem(
+        //   localStorageKeys.edges,
+        //   JSON.stringify(updatedEdges)
+        // );
         return updatedEdges;
       }),
     [setEdges]
   );
 
-  useEffect(() => {
-    const storedNodes = localStorage.getItem(localStorageKeys.nodes);
-    const storedEdges = localStorage.getItem(localStorageKeys.edges);
+  // useEffect(() => {
+  //   const storedNodes = localStorage.getItem(localStorageKeys.nodes);
+  //   const storedEdges = localStorage.getItem(localStorageKeys.edges);
 
-    if (storedNodes) {
-      setNodes(JSON.parse(storedNodes));
-    }
-    if (storedEdges) {
-      setEdges(JSON.parse(storedEdges));
-    }
-  }, [setNodes, setEdges]);
+  //   if (storedNodes) {
+  //     setNodes(JSON.parse(storedNodes));
+  //   }
+  //   if (storedEdges) {
+  //     setEdges(JSON.parse(storedEdges));
+  //   }
+  // }, [setNodes, setEdges]);
 
   const handleNodesChange = (changes: NodeChange<Node>[]) => {
     setNodes((nds) => {
       const updatedNodes = applyNodeChanges(changes, nds);
-      localStorage.setItem(
-        localStorageKeys.nodes,
-        JSON.stringify(updatedNodes)
-      );
+      // localStorage.setItem(
+      //   localStorageKeys.nodes,
+      //   JSON.stringify(updatedNodes)
+      // );
       return updatedNodes;
     });
   };
@@ -112,10 +110,10 @@ const App = () => {
   const handleEdgesChange = (changes: EdgeChange<Edge>[]) => {
     setEdges((eds) => {
       const updatedEdges = applyEdgeChanges(changes, eds);
-      localStorage.setItem(
-        localStorageKeys.edges,
-        JSON.stringify(updatedEdges)
-      );
+      // localStorage.setItem(
+      //   localStorageKeys.edges,
+      //   JSON.stringify(updatedEdges)
+      // );
       return updatedEdges;
     });
   };
@@ -151,7 +149,9 @@ const App = () => {
         <Background variant={BackgroundVariant.Lines} gap={12} size={1} />
         <NodeMenu />
         <SelectionDisplay />
+        <Help />
         {menu && <NodeContextMenu {...menu} />}
+        <LocalStorageHandler />
       </ReactFlow>
     </div>
   );
