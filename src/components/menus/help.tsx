@@ -4,9 +4,17 @@ import { styleConstants } from "../../constants/styleConstants";
 import { useState } from "react";
 import { VscClose } from "react-icons/vsc";
 import Key from "../common/key";
+import { localStorageKeys } from "../../constants/local-storage-keys";
 
 export const Help = () => {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(
+    !(localStorage.getItem(localStorageKeys.readHelpBefore) === "true")
+  );
+
+  const handleCloseModal = () => {
+    localStorage.setItem(localStorageKeys.readHelpBefore, "true");
+    setModalOpen(false);
+  };
 
   return (
     <>
@@ -20,7 +28,7 @@ export const Help = () => {
       {modalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={() => setModalOpen(false)}
+          onClick={() => handleCloseModal()}
         >
           <div className="relative max-w-lg p-6 mx-auto bg-white rounded-lg shadow-lg">
             <h2 className="mb-4 text-xl font-bold">Welcome to Logic Sandbox</h2>
@@ -46,7 +54,7 @@ export const Help = () => {
               Created by Tom Whitticase
             </a>
             <button
-              onClick={() => setModalOpen(false)}
+              onClick={() => handleCloseModal()}
               className="absolute text-gray-400 top-2 right-2 hover:text-gray-600"
             >
               <VscClose size={styleConstants.nodeIconSize} />
