@@ -27,7 +27,7 @@ import {
 } from "react-icons/tb";
 import BufferIcon from "../../assets/buffer-icon.svg";
 import NotIcon from "../../assets/not-icon.svg";
-import nodeTypes from "../../constants/nodeTypes";
+import { nodeTypes } from "../../constants/node-types";
 import demultiplexerIcon from "../../assets/demultiplexer-icon.svg";
 import multiplexerIcon from "../../assets/multiplexer-icon.svg";
 import dFlipFlopIcon from "../../assets/d-flip-flop-icon.svg";
@@ -81,7 +81,7 @@ const NodeMenu: React.FC = () => {
     <Panel>
       <Container>
         {menuOpen ? (
-          <div className="flex flex-col w-36">
+          <div className="flex flex-col w-40">
             <div className="flex items-center justify-start">
               <button
                 className="p-2 border-0 rounded-full"
@@ -90,8 +90,7 @@ const NodeMenu: React.FC = () => {
                 <MdMenuOpen />
               </button>
             </div>
-
-            <div className="flex flex-col gap-1 px-2 pb-2">
+            <div className="flex flex-col gap-2 px-2 pb-2">
               <div className="flex flex-col gap-1">
                 <Title content="Options" />
                 <div className="flex flex-col items-start justify-center gap-1">
@@ -106,227 +105,240 @@ const NodeMenu: React.FC = () => {
                   </Button>
                 </div>
               </div>
-              <div className="overflow-y-scroll overflow-x-visible overflow-visible max-h-[450px]">
-                <div className="flex flex-col">
-                  <Title content="Inputs" />
-                  <div className="flex flex-wrap items-start justify-start gap-1">
-                    {[
-                      {
-                        name: "PushButton",
-                        tooltipLabel: "Push Button",
-                        type: nodeTypes.PushButton,
-                        icon: (
-                          <IoMdRadioButtonOn
-                            size={styleConstants.nodeIconSize}
-                          />
-                        ),
-                      },
-                      {
-                        name: "Switch",
-                        tooltipLabel: "Toggle Switch",
-                        type: nodeTypes.Switch,
-                        icon: (
-                          <PiToggleLeft size={styleConstants.nodeIconSize} />
-                        ),
-                      },
-                      {
-                        name: "Clock",
-                        tooltipLabel: "Clock",
-                        type: nodeTypes.Clock,
-                        icon: <FiClock size={styleConstants.nodeIconSize} />,
-                      },
-                      {
-                        name: "HexInput",
-                        tooltipLabel: "Hex Input",
-                        type: nodeTypes.HexInput,
-                        icon: (
-                          <TbSquareNumber0 size={styleConstants.nodeIconSize} />
-                        ),
-                      },
-                    ].map(({ icon, name, tooltipLabel }) => (
-                      <Tooltip label={tooltipLabel} key={name}>
-                        <Button
-                          variant="secondary"
-                          onClick={() => addNode(name)}
-                        >
-                          {icon}
-                        </Button>
-                      </Tooltip>
-                    ))}
+              <div className="flex flex-col">
+                <Title content="Components" />
+                <div className="overflow-y-scroll flex flex-col rounded gap-2 border-2 px-2 pb-2 overflow-x-visible overflow-visible max-h-[450px]">
+                  <div className="flex flex-col">
+                    <Title content="Inputs" variant="small" />
+                    <div className="flex flex-wrap items-start justify-start gap-1">
+                      {[
+                        {
+                          name: "PushButton",
+                          tooltipLabel: "Push Button",
+                          type: nodeTypes.PushButton,
+                          icon: (
+                            <IoMdRadioButtonOn
+                              size={styleConstants.nodeIconSize}
+                            />
+                          ),
+                        },
+                        {
+                          name: "Switch",
+                          tooltipLabel: "Toggle Switch",
+                          type: nodeTypes.Switch,
+                          icon: (
+                            <PiToggleLeft size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                        {
+                          name: "Clock",
+                          tooltipLabel: "Clock",
+                          type: nodeTypes.Clock,
+                          icon: <FiClock size={styleConstants.nodeIconSize} />,
+                        },
+                        {
+                          name: "HexInput",
+                          tooltipLabel: "Hex Input",
+                          type: nodeTypes.HexInput,
+                          icon: (
+                            <TbSquareNumber0
+                              size={styleConstants.nodeIconSize}
+                            />
+                          ),
+                        },
+                      ].map(({ icon, name, tooltipLabel }) => (
+                        <Tooltip label={tooltipLabel} key={name}>
+                          <Button
+                            variant="secondary"
+                            onClick={() => addNode(name)}
+                          >
+                            {icon}
+                          </Button>
+                        </Tooltip>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div className="flex flex-col">
-                  <Title content="Outputs" />
-                  <div className="flex flex-wrap items-start justify-start gap-1">
-                    {[
-                      {
-                        name: "Bulb",
-                        tooltipLabel: "Bulb",
-                        type: nodeTypes.Bulb,
-                        icon: (
-                          <IoBulbOutline size={styleConstants.nodeIconSize} />
-                        ),
-                      },
-                      {
-                        name: "HexDisplay",
-                        tooltipLabel: "Hex Display",
-                        type: nodeTypes.HexDisplay,
-                        icon: (
-                          <TbSquareNumber0Filled
-                            size={styleConstants.nodeIconSize}
-                          />
-                        ),
-                      },
-                    ].map(({ icon, name, tooltipLabel }) => (
-                      <Tooltip label={tooltipLabel} key={name}>
-                        <Button
-                          variant="secondary"
-                          onClick={() => addNode(name)}
-                        >
-                          {icon}
-                        </Button>
-                      </Tooltip>
-                    ))}
+                  <div className="flex flex-col">
+                    <Title content="Outputs" variant="small" />
+                    <div className="flex flex-wrap items-start justify-start gap-1">
+                      {[
+                        {
+                          name: "Bulb",
+                          tooltipLabel: "Bulb",
+                          type: nodeTypes.Bulb,
+                          icon: (
+                            <IoBulbOutline size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                        {
+                          name: "HexDisplay",
+                          tooltipLabel: "Hex Display",
+                          type: nodeTypes.HexDisplay,
+                          icon: (
+                            <TbSquareNumber0Filled
+                              size={styleConstants.nodeIconSize}
+                            />
+                          ),
+                        },
+                      ].map(({ icon, name, tooltipLabel }) => (
+                        <Tooltip label={tooltipLabel} key={name}>
+                          <Button
+                            variant="secondary"
+                            onClick={() => addNode(name)}
+                          >
+                            {icon}
+                          </Button>
+                        </Tooltip>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div className="flex flex-col">
-                  <Title content="Logic Gates" />
-                  <div className="flex flex-wrap items-start justify-start gap-1">
-                    {[
-                      {
-                        name: "Buffer",
-                        tooltipLabel: "Buffer",
-                        type: nodeTypes.Buffer,
-                        icon: (
-                          <img
-                            src={BufferIcon}
-                            alt="buffer-icon"
-                            style={{ width: styleConstants.nodeIconSize }}
-                          />
-                        ),
-                      },
-                      {
-                        name: "Not",
-                        tooltipLabel: "Not",
-                        type: nodeTypes.Not,
-                        icon: (
-                          <img
-                            src={NotIcon}
-                            style={{ width: styleConstants.nodeIconSize }}
-                          />
-                        ),
-                      },
-                      {
-                        name: "And",
-                        tooltipLabel: "And",
-                        type: nodeTypes.And,
-                        icon: <TbLogicAnd size={styleConstants.nodeIconSize} />,
-                      },
-                      {
-                        name: "Nand",
-                        tooltipLabel: "Nand",
-                        type: nodeTypes.Nand,
-                        icon: (
-                          <TbLogicNand size={styleConstants.nodeIconSize} />
-                        ),
-                      },
-                      {
-                        name: "Or",
-                        tooltipLabel: "Or",
-                        type: nodeTypes.Or,
-                        icon: <TbLogicOr size={styleConstants.nodeIconSize} />,
-                      },
-                      {
-                        name: "Xor",
-                        tooltipLabel: "Xor",
-                        type: nodeTypes.Xor,
-                        icon: <TbLogicXor size={styleConstants.nodeIconSize} />,
-                      },
-                      {
-                        name: "Nor",
-                        tooltipLabel: "Nor",
-                        type: nodeTypes.Nor,
-                        icon: <TbLogicNor size={styleConstants.nodeIconSize} />,
-                      },
-                      {
-                        name: "Xnor",
-                        tooltipLabel: "Xnor",
-                        type: nodeTypes.Xnor,
-                        icon: (
-                          <TbLogicXnor size={styleConstants.nodeIconSize} />
-                        ),
-                      },
-                    ].map(({ icon, name, tooltipLabel }) => (
-                      <Tooltip label={tooltipLabel} key={name}>
-                        <Button
-                          variant="secondary"
-                          onClick={() => addNode(name)}
-                        >
-                          {icon}
-                        </Button>
-                      </Tooltip>
-                    ))}
+                  <div className="flex flex-col">
+                    <Title content="Logic Gates" variant="small" />
+                    <div className="flex flex-wrap items-start justify-start gap-1">
+                      {[
+                        {
+                          name: "Buffer",
+                          tooltipLabel: "Buffer",
+                          type: nodeTypes.Buffer,
+                          icon: (
+                            <img
+                              src={BufferIcon}
+                              alt="buffer-icon"
+                              style={{ width: styleConstants.nodeIconSize }}
+                            />
+                          ),
+                        },
+                        {
+                          name: "Not",
+                          tooltipLabel: "Not",
+                          type: nodeTypes.Not,
+                          icon: (
+                            <img
+                              src={NotIcon}
+                              style={{ width: styleConstants.nodeIconSize }}
+                            />
+                          ),
+                        },
+                        {
+                          name: "And",
+                          tooltipLabel: "And",
+                          type: nodeTypes.And,
+                          icon: (
+                            <TbLogicAnd size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                        {
+                          name: "Nand",
+                          tooltipLabel: "Nand",
+                          type: nodeTypes.Nand,
+                          icon: (
+                            <TbLogicNand size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                        {
+                          name: "Or",
+                          tooltipLabel: "Or",
+                          type: nodeTypes.Or,
+                          icon: (
+                            <TbLogicOr size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                        {
+                          name: "Xor",
+                          tooltipLabel: "Xor",
+                          type: nodeTypes.Xor,
+                          icon: (
+                            <TbLogicXor size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                        {
+                          name: "Nor",
+                          tooltipLabel: "Nor",
+                          type: nodeTypes.Nor,
+                          icon: (
+                            <TbLogicNor size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                        {
+                          name: "Xnor",
+                          tooltipLabel: "Xnor",
+                          type: nodeTypes.Xnor,
+                          icon: (
+                            <TbLogicXnor size={styleConstants.nodeIconSize} />
+                          ),
+                        },
+                      ].map(({ icon, name, tooltipLabel }) => (
+                        <Tooltip label={tooltipLabel} key={name}>
+                          <Button
+                            variant="secondary"
+                            onClick={() => addNode(name)}
+                          >
+                            {icon}
+                          </Button>
+                        </Tooltip>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex flex-col">
-                  <Title content="Advanced" />
-                  <div className="flex flex-wrap items-start justify-start gap-1">
-                    {[
-                      {
-                        name: "Multiplexer",
-                        tooltipLabel: "Multiplexer",
-                        type: nodeTypes.Multiplexer,
-                        icon: (
-                          <img
-                            src={multiplexerIcon}
-                            style={{ width: styleConstants.nodeIconSize }}
-                          />
-                        ),
-                      },
-                      {
-                        name: "Demultiplexer",
-                        tooltipLabel: "Demultiplexer",
-                        type: nodeTypes.Demultiplexer,
-                        icon: (
-                          <img
-                            src={demultiplexerIcon}
-                            style={{ width: styleConstants.nodeIconSize }}
-                          />
-                        ),
-                      },
-                      {
-                        name: "DFlipFlop",
-                        tooltipLabel: "D Flip-Flop",
-                        type: nodeTypes.DFlipFlop,
-                        icon: (
-                          <img
-                            src={dFlipFlopIcon}
-                            style={{ width: styleConstants.nodeIconSize }}
-                          />
-                        ),
-                      },
-                      {
-                        name: "FullAdder",
-                        tooltipLabel: "Full Adder",
-                        type: nodeTypes.FullAdder,
-                        icon: (
-                          <img
-                            src={fullAdderIcon}
-                            style={{ width: styleConstants.nodeIconSize }}
-                          />
-                        ),
-                      },
-                    ].map(({ icon, name, tooltipLabel }) => (
-                      <Tooltip label={tooltipLabel} key={name}>
-                        <Button
-                          variant="secondary"
-                          onClick={() => addNode(name)}
-                        >
-                          {icon}
-                        </Button>
-                      </Tooltip>
-                    ))}
+                  <div className="flex flex-col">
+                    <Title content="Advanced" variant="small" />
+                    <div className="flex flex-wrap items-start justify-start gap-1">
+                      {[
+                        {
+                          name: "Multiplexer",
+                          tooltipLabel: "Multiplexer",
+                          type: nodeTypes.Multiplexer,
+                          icon: (
+                            <img
+                              src={multiplexerIcon}
+                              style={{ width: styleConstants.nodeIconSize }}
+                            />
+                          ),
+                        },
+                        {
+                          name: "Demultiplexer",
+                          tooltipLabel: "Demultiplexer",
+                          type: nodeTypes.Demultiplexer,
+                          icon: (
+                            <img
+                              src={demultiplexerIcon}
+                              style={{ width: styleConstants.nodeIconSize }}
+                            />
+                          ),
+                        },
+                        {
+                          name: "DFlipFlop",
+                          tooltipLabel: "D Flip-Flop",
+                          type: nodeTypes.DFlipFlop,
+                          icon: (
+                            <img
+                              src={dFlipFlopIcon}
+                              style={{ width: styleConstants.nodeIconSize }}
+                            />
+                          ),
+                        },
+                        {
+                          name: "FullAdder",
+                          tooltipLabel: "Full Adder",
+                          type: nodeTypes.FullAdder,
+                          icon: (
+                            <img
+                              src={fullAdderIcon}
+                              style={{ width: styleConstants.nodeIconSize }}
+                            />
+                          ),
+                        },
+                      ].map(({ icon, name, tooltipLabel }) => (
+                        <Tooltip label={tooltipLabel} key={name}>
+                          <Button
+                            variant="secondary"
+                            onClick={() => addNode(name)}
+                          >
+                            {icon}
+                          </Button>
+                        </Tooltip>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

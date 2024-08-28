@@ -2,17 +2,13 @@ import React from "react";
 
 type VariantType = "primary" | "secondary" | "menu";
 type Props = {
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
   children: React.ReactNode;
   disabled?: boolean;
   variant?: VariantType;
-};
-export const Button = ({
-  onClick,
-  children,
-  disabled,
-  variant = "primary",
-}: Props) => {
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+
+export const Button = (props: Props) => {
+  const { children, disabled, variant = "primary" } = props;
   const variantStyles: Record<VariantType, string> = {
     secondary:
       "items-center justify-center text-black bg-gradient-to-r from-white to-gray-100 hover:from-gray-100 hover:to-gray-200 px-2 py-1 border-2 rounded-md",
@@ -26,7 +22,7 @@ export const Button = ({
       className={`flex gap-2 ${variantStyles[variant]} ${
         disabled && "opacity-50"
       }`}
-      onClick={onClick}
+      {...props}
     >
       {children}
     </button>

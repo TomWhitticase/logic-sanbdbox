@@ -28,7 +28,7 @@ import NodeContextMenu, {
 import NodeMenu from "./components/menus/node-menu";
 import SelectionDisplay from "./components/menus/selection-display";
 import edgeTypes from "./constants/edgeTypes";
-import nodeTypes from "./constants/nodeTypes";
+import { nodeTypes } from "./constants/node-types";
 
 const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
@@ -52,6 +52,7 @@ const App = () => {
       const pane = ref.current.getBoundingClientRect();
 
       setMenu({
+        closeMenu,
         id: node.id,
         top: event.clientY < pane.height - 200 ? event.clientY : undefined,
         left: event.clientX < pane.width - 200 ? event.clientX : undefined,
@@ -68,53 +69,22 @@ const App = () => {
     [setMenu]
   );
 
+  const closeMenu = useCallback(() => setMenu(null), [setMenu]);
+
   const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
 
   const onConnect = useCallback(
     (params: Edge | Connection) =>
-      setEdges((eds) => {
-        const updatedEdges = addEdge({ ...params, type: "wire" }, eds);
-        // localStorage.setItem(
-        //   localStorageKeys.edges,
-        //   JSON.stringify(updatedEdges)
-        // );
-        return updatedEdges;
-      }),
+      setEdges((eds) => addEdge({ ...params, type: "wire" }, eds)),
     [setEdges]
   );
 
-  // useEffect(() => {
-  //   const storedNodes = localStorage.getItem(localStorageKeys.nodes);
-  //   const storedEdges = localStorage.getItem(localStorageKeys.edges);
-
-  //   if (storedNodes) {
-  //     setNodes(JSON.parse(storedNodes));
-  //   }
-  //   if (storedEdges) {
-  //     setEdges(JSON.parse(storedEdges));
-  //   }
-  // }, [setNodes, setEdges]);
-
   const handleNodesChange = (changes: NodeChange<Node>[]) => {
-    setNodes((nds) => {
-      const updatedNodes = applyNodeChanges(changes, nds);
-      // localStorage.setItem(
-      //   localStorageKeys.nodes,
-      //   JSON.stringify(updatedNodes)
-      // );
-      return updatedNodes;
-    });
+    setNodes((nds) => applyNodeChanges(changes, nds));
   };
 
   const handleEdgesChange = (changes: EdgeChange<Edge>[]) => {
-    setEdges((eds) => {
-      const updatedEdges = applyEdgeChanges(changes, eds);
-      // localStorage.setItem(
-      //   localStorageKeys.edges,
-      //   JSON.stringify(updatedEdges)
-      // );
-      return updatedEdges;
-    });
+    setEdges((eds) => applyEdgeChanges(changes, eds));
   };
 
   return (

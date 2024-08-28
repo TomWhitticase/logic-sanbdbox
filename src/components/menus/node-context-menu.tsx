@@ -3,7 +3,8 @@ import { useCallback } from "react";
 import { FaArrowRotateLeft, FaArrowRotateRight } from "react-icons/fa6";
 import { IoDuplicateOutline } from "react-icons/io5";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { TbUnlink } from "react-icons/tb";
+import { TbHelp, TbUnlink } from "react-icons/tb";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "../common/button";
 import { Container } from "../common/container";
 
@@ -13,6 +14,7 @@ export type NodeContextMenuProps = {
   left: number | undefined;
   right: number | undefined;
   bottom: number | undefined;
+  closeMenu: () => void;
 };
 const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
   id,
@@ -20,9 +22,11 @@ const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
   left,
   right,
   bottom,
-  ...props
+  closeMenu,
 }) => {
   const { getNode, setNodes, addNodes, setEdges, updateNode } = useReactFlow();
+  const searchParamsHook = useSearchParams();
+  const setSearchParams = searchParamsHook[1];
   const updateNodeInternals = useUpdateNodeInternals();
   const node = getNode(id);
 
@@ -47,6 +51,7 @@ const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
   const deleteNode = useCallback(() => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
     setEdges((edges) => edges.filter((edge) => edge.source !== id));
+    closeMenu();
   }, [id, setNodes, setEdges]);
 
   const disconnectEdges = useCallback(() => {
@@ -79,6 +84,11 @@ const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
     [updateNode, id, updateNodeInternals]
   );
 
+  const handleHelpClicked = () => {
+    setSearchParams({ help: node?.type ?? "" });
+    closeMenu();
+  };
+
   return (
     <div
       style={{
@@ -90,9 +100,13 @@ const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
         position: "absolute",
         boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
       }}
-      {...props}
     >
       <Container variant="menu">
+        <Button variant="menu" onClick={() => handleHelpClicked()}>
+          <div className="flex items-center gap-2">
+            <TbHelp /> Help
+          </div>
+        </Button>
         <Button variant="menu" onClick={() => rotate(90)}>
           <div className="flex items-center gap-2">
             <FaArrowRotateRight /> Rotate 90°
