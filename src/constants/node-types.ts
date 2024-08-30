@@ -38,6 +38,8 @@ export const nodeTypes = {
   FullAdder,
 } as const;
 
+export type NodeType = keyof typeof nodeTypes;
+
 export const nodeTypesArray = Object.entries(nodeTypes) as Array<
   [keyof typeof nodeTypes, React.ComponentType]
 >;
