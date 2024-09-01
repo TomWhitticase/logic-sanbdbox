@@ -2,7 +2,7 @@ import { Node, NodeProps, Position, useReactFlow } from "@xyflow/react";
 import { useEffect } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { FiClock } from "react-icons/fi";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { NodeData } from "../../types/node-data";
@@ -10,9 +10,9 @@ import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
 
-const Clock = (
-  props: NodeProps<Node<NodeData & { intervalPeriod: number }>>
-) => {
+const Clock: React.FC<
+  NodeProps<Node<NodeData & { intervalPeriod?: number }>>
+> = (props) => {
   const { id, data } = props;
 
   const { updateNodeData } = useReactFlow();

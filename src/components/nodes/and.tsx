@@ -1,13 +1,13 @@
-import { Node, NodeProps, Position } from "@xyflow/react";
-import React, { useEffect } from "react";
+import { NodeProps, Position, Node } from "@xyflow/react";
+import { useEffect } from "react";
 import { TbLogicAnd } from "react-icons/tb";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
+import { NodeData } from "../../types/node-data";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
-import { NodeData } from "../../types/node-data";
 
 const And: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id } = props;

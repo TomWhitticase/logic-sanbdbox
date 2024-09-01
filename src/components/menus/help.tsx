@@ -3,7 +3,7 @@ import { TbHelp } from "react-icons/tb";
 import { VscClose } from "react-icons/vsc";
 import { useSearchParams } from "react-router-dom";
 import { localStorageKeys } from "../../constants/local-storage-keys";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import Key from "../common/key";
 import { ReactNode, useEffect } from "react";
 import { nodeTypes } from "../../constants/node-types";
@@ -25,6 +25,7 @@ import PushButton from "../nodes/push-button";
 import Switch from "../nodes/switch";
 import Xnor from "../nodes/xnor";
 import Xor from "../nodes/xor";
+import SevenSegmentDisplay from "../nodes/seven-segment-display";
 
 const emptyNodeProps = {
   id: "",
@@ -271,6 +272,18 @@ const nodeHelp: { [K in keyof typeof nodeTypes]: ReactNode } = {
         carry-in bit) and produces a sum and carry-out.
         <div className="flex items-center justify-center gap-4 p-2">
           <FullAdder {...emptyNodeProps} />
+        </div>
+      </p>
+    </>
+  ),
+  SevenSegmentDisplay: (
+    <>
+      <h2 className="mb-4 text-xl font-bold">Seven Segment Display</h2>
+      <p className="mb-4 text-gray-700">
+        A display that shows decimal digits using seven segments. There is an
+        input for each segement and an additional input for the decimal point.
+        <div className="flex items-center justify-center gap-4 p-2">
+          <SevenSegmentDisplay {...emptyNodeProps} />
         </div>
       </p>
     </>

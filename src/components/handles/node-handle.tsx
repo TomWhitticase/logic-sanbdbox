@@ -1,5 +1,5 @@
 import { Handle, HandleProps } from "@xyflow/react";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 
 const NodeHandle = (props: HandleProps & { state: boolean }) => {
   return (

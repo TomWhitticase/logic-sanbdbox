@@ -1,11 +1,11 @@
 import { Node, NodeProps } from "@xyflow/react";
 import React from "react";
 
-type Props = {
-  children: React.ReactNode;
-} & NodeProps<Node>;
-
-export const NodeWrapper = ({ children, data }: Props) => {
+export const NodeWrapper: React.FC<
+  {
+    children: React.ReactNode;
+  } & NodeProps<Node>
+> = ({ children, data }) => {
   return (
     <div
       style={{

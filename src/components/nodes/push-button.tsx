@@ -1,6 +1,6 @@
 import { Node, NodeProps, Position } from "@xyflow/react";
 import { IoMdRadioButtonOn } from "react-icons/io";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { NodeData } from "../../types/node-data";
 import { Container } from "../common/container";
@@ -9,7 +9,7 @@ import NodeWrapper from "./node-wrapper";
 
 const pushButtonTime = 200;
 
-const PushButton = (props: NodeProps<Node<NodeData>>) => {
+const PushButton: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id, data } = props;
 
   const buttonValue =

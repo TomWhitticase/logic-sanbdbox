@@ -4,8 +4,9 @@ import { useInputValue } from "../../hooks/use-target-handle-values";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
+import { NodeData } from "../../types/node-data";
 
-const HexDisplay: React.FC<NodeProps<Node>> = (props) => {
+const HexDisplay: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const inputA = useInputValue("inputA");
   const inputB = useInputValue("inputB");
   const inputC = useInputValue("inputC");

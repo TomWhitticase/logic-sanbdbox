@@ -1,0 +1,19 @@
+<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
+  transform="skewX(-5)"
+ stroke-linecap="round" stroke-linejoin="round"  xmlns="http://www.w3.org/2000/svg">
+  <!-- Segment A -->
+  <rect x="8" y="2" width="6" height="0.1" fill="#000" />
+  <!-- Segment B -->
+  <rect x="17" y="4" width="0.1" height="6" fill="#000" />
+  <!-- Segment C -->
+  <rect x="17" y="14" width="0.1" height="6" fill="#000" />
+  <!-- Segment D -->
+  <rect x="8" y="22" width="6" height="0.1" fill="#000" />
+  <!-- Segment E -->
+  <rect x="5" y="14" width="0.1" height="6" fill="#000" />
+  <!-- Segment F -->
+  <rect x="5" y="4" width="0.1" height="6" fill="#000" />
+  <!-- Segment G -->
+  <rect x="8" y="12" width="6" height="0.1" fill="#000" />
+  <circle cx="21" cy="22" r="0.5" fill="#000" />
+</svg>

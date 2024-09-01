@@ -1,14 +1,15 @@
 import { Node, NodeProps, Position } from "@xyflow/react";
 import React, { useEffect } from "react";
 import NotIcon from "../../assets/not-icon.svg";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
+import { NodeData } from "../../types/node-data";
 
-const Not: React.FC<NodeProps<Node>> = (props) => {
+const Not: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id } = props;
 
   const input = useInputValue("input");

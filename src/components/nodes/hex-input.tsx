@@ -37,7 +37,7 @@ const HexInput: React.FC<
   NodeProps<
     Node<
       NodeData & {
-        inputValue: string;
+        inputValue?: string;
       }
     >
   >

@@ -1,5 +1,5 @@
-// NodeMenu.tsx
 import {
+  NodeTypes,
   Panel,
   useEdges,
   useNodes,
@@ -9,36 +9,50 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { FaRegSave } from "react-icons/fa";
 import { FaRegFolderOpen } from "react-icons/fa6";
-import { FiClock } from "react-icons/fi";
-import { IoMdRadioButtonOn } from "react-icons/io";
-import { IoBulbOutline } from "react-icons/io5";
 import { MdMenu, MdMenuOpen } from "react-icons/md";
-import { PiToggleLeft } from "react-icons/pi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import {
-  TbLogicAnd,
-  TbLogicNand,
-  TbLogicNor,
-  TbLogicOr,
-  TbLogicXnor,
-  TbLogicXor,
-  TbSquareNumber0,
-  TbSquareNumber0Filled,
-} from "react-icons/tb";
-import BufferIcon from "../../assets/buffer-icon.svg";
-import dFlipFlopIcon from "../../assets/d-flip-flop-icon.svg";
-import demultiplexerIcon from "../../assets/demultiplexer-icon.svg";
-import fullAdderIcon from "../../assets/full-adder-icon.svg";
-import multiplexerIcon from "../../assets/multiplexer-icon.svg";
-import NotIcon from "../../assets/not-icon.svg";
-import { NodeType, nodeTypes } from "../../constants/node-types";
-import { styleConstants } from "../../constants/styleConstants";
+  nodeDefinitionsArray,
+  NodeType,
+  nodeTypes,
+} from "../../constants/node-types";
 import { useMousePosition } from "../../hooks/use-mouse-position";
 import { loadFromDevice, saveToDevice } from "../../utils/save-and-open-utils";
 import { Button } from "../common/button";
 import { Container } from "../common/container";
 import { Title } from "../common/title";
 import Tooltip from "../common/tooltip";
+
+const inputComponents = nodeDefinitionsArray.filter((v) => {
+  const inputTypes: NodeType[] = ["switch", "clock", "pushButton", "hexInput"];
+  return inputTypes.some((type) => type === v.id);
+});
+const logicGateComponents = nodeDefinitionsArray.filter((v) => {
+  const inputTypes: NodeType[] = [
+    "buffer",
+    "not",
+    "and",
+    "nand",
+    "or",
+    "nor",
+    "xor",
+    "xnor",
+  ];
+  return inputTypes.some((type) => type === v.id);
+});
+const outputComponents = nodeDefinitionsArray.filter((v) => {
+  const inputTypes: NodeType[] = ["bulb", "SevenSegmentDisplay", "hexDisplay"];
+  return inputTypes.some((type) => type === v.id);
+});
+const advancedComponents = nodeDefinitionsArray.filter((v) => {
+  const inputTypes: NodeType[] = [
+    "multiplexer",
+    "demultiplexer",
+    "fullAdder",
+    "dFlipFlop",
+  ];
+  return inputTypes.some((type) => type === v.id);
+});
 
 const NodeMenu: React.FC = () => {
   const { addNodes, setNodes, setEdges, getNode, updateNode } = useReactFlow();
@@ -52,7 +66,7 @@ const NodeMenu: React.FC = () => {
   const { screenToFlowPosition } = useReactFlow();
 
   const addNode = useCallback(
-    (type: NodeType, mousePos?: { x: number; y: number }) => {
+    (nodeType: keyof NodeTypes, mousePos?: { x: number; y: number }) => {
       const pos = !mousePos
         ? {
             x: (window.innerWidth / 2 - x) / zoom,
@@ -63,11 +77,11 @@ const NodeMenu: React.FC = () => {
             y: mousePos.y,
           });
 
-      const newId = `${type}-${Date.now()}`;
+      const newId = `${nodeType}-${Date.now()}`;
       addNodes({
         id: newId,
         data: { sourceHandleValues: [], rotation: 0 },
-        type,
+        type: nodeType,
         position: { x: pos.x, y: pos.y },
         zIndex: nodes.length,
       });
@@ -96,7 +110,7 @@ const NodeMenu: React.FC = () => {
 
   const mousePos = useMousePosition();
 
-  const [nodeToAdd, setNodeToAdd] = useState<NodeType | null>(null);
+  const [nodeToAdd, setNodeToAdd] = useState<keyof NodeTypes | null>(null);
 
   useEffect(() => {
     const dragNDropElement = dragNDropRef.current;
@@ -115,10 +129,6 @@ const NodeMenu: React.FC = () => {
     return () => window.removeEventListener("mouseup", handleMouseUp);
   }, [handleMouseUp]);
 
-  const hanldeMouseDown = (name: NodeType) => {
-    setNodeToAdd(name);
-  };
-
   return (
     <>
       {nodeToAdd && (
@@ -132,11 +142,11 @@ const NodeMenu: React.FC = () => {
             pointerEvents: "none",
           }}
         >
-          {React.createElement(nodeTypes[nodeToAdd] as any, {
+          {React.createElement(nodeTypes[nodeToAdd], {
             data: { sourceHandleValues: [], rotation: 0 },
             zIndex: 0,
-            id: "",
-            type: "",
+            id: "drag-and-drop-node",
+            type: nodeToAdd,
             dragging: false,
             isConnectable: false,
             positionAbsoluteX: 0,
@@ -177,53 +187,11 @@ const NodeMenu: React.FC = () => {
                     <div className="flex flex-col">
                       <Title content="Inputs" variant="small" />
                       <div className="flex flex-wrap items-start justify-start gap-1">
-                        {(
-                          [
-                            {
-                              name: "PushButton",
-                              tooltipLabel: "Push Button",
-                              type: nodeTypes.PushButton,
-                              icon: (
-                                <IoMdRadioButtonOn
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Switch",
-                              tooltipLabel: "Toggle Switch",
-                              type: nodeTypes.Switch,
-                              icon: (
-                                <PiToggleLeft
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Clock",
-                              tooltipLabel: "Clock",
-                              type: nodeTypes.Clock,
-                              icon: (
-                                <FiClock size={styleConstants.nodeIconSize} />
-                              ),
-                            },
-                            {
-                              name: "HexInput",
-                              tooltipLabel: "Hex Input",
-                              type: nodeTypes.HexInput,
-                              icon: (
-                                <TbSquareNumber0
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                          ] as const
-                        ).map(({ icon, name, tooltipLabel }) => (
-                          <Tooltip label={tooltipLabel} key={tooltipLabel}>
+                        {inputComponents.map(({ displayName, id, icon }) => (
+                          <Tooltip label={displayName} key={id}>
                             <Button
                               variant="secondary"
-                              onClick={() => addNode(name)}
-                              onMouseDown={() => hanldeMouseDown(name)}
+                              onMouseDown={() => setNodeToAdd(id)}
                             >
                               {icon}
                             </Button>
@@ -234,35 +202,11 @@ const NodeMenu: React.FC = () => {
                     <div className="flex flex-col">
                       <Title content="Outputs" variant="small" />
                       <div className="flex flex-wrap items-start justify-start gap-1">
-                        {(
-                          [
-                            {
-                              name: "Bulb",
-                              tooltipLabel: "Bulb",
-                              type: nodeTypes.Bulb,
-                              icon: (
-                                <IoBulbOutline
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                            {
-                              name: "HexDisplay",
-                              tooltipLabel: "Hex Display",
-                              type: nodeTypes.HexDisplay,
-                              icon: (
-                                <TbSquareNumber0Filled
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                          ] as const
-                        ).map(({ icon, name, tooltipLabel }) => (
-                          <Tooltip label={tooltipLabel} key={name}>
+                        {outputComponents.map(({ icon, id, displayName }) => (
+                          <Tooltip label={displayName} key={id}>
                             <Button
                               variant="secondary"
-                              onClick={() => addNode(name)}
-                              onMouseDown={() => hanldeMouseDown(name)}
+                              onMouseDown={() => setNodeToAdd(id)}
                             >
                               {icon}
                             </Button>
@@ -273,165 +217,29 @@ const NodeMenu: React.FC = () => {
                     <div className="flex flex-col">
                       <Title content="Logic Gates" variant="small" />
                       <div className="flex flex-wrap items-start justify-start gap-1">
-                        {(
-                          [
-                            {
-                              name: "Buffer",
-                              tooltipLabel: "Buffer",
-                              type: nodeTypes.Buffer,
-                              icon: (
-                                <img
-                                  draggable={false}
-                                  src={BufferIcon}
-                                  style={{ width: styleConstants.nodeIconSize }}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Not",
-                              tooltipLabel: "Not",
-                              type: nodeTypes.Not,
-                              icon: (
-                                <img
-                                  draggable={false}
-                                  src={NotIcon}
-                                  style={{ width: styleConstants.nodeIconSize }}
-                                />
-                              ),
-                            },
-                            {
-                              name: "And",
-                              tooltipLabel: "And",
-                              type: nodeTypes.And,
-                              icon: (
-                                <TbLogicAnd
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Nand",
-                              tooltipLabel: "Nand",
-                              type: nodeTypes.Nand,
-                              icon: (
-                                <TbLogicNand
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Or",
-                              tooltipLabel: "Or",
-                              type: nodeTypes.Or,
-                              icon: (
-                                <TbLogicOr size={styleConstants.nodeIconSize} />
-                              ),
-                            },
-                            {
-                              name: "Xor",
-                              tooltipLabel: "Xor",
-                              type: nodeTypes.Xor,
-                              icon: (
-                                <TbLogicXor
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Nor",
-                              tooltipLabel: "Nor",
-                              type: nodeTypes.Nor,
-                              icon: (
-                                <TbLogicNor
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Xnor",
-                              tooltipLabel: "Xnor",
-                              type: nodeTypes.Xnor,
-                              icon: (
-                                <TbLogicXnor
-                                  size={styleConstants.nodeIconSize}
-                                />
-                              ),
-                            },
-                          ] as const
-                        ).map(({ icon, name, tooltipLabel }) => (
-                          <Tooltip label={tooltipLabel} key={name}>
-                            <Button
-                              variant="secondary"
-                              onClick={() => addNode(name)}
-                              onMouseDown={() => hanldeMouseDown(name)}
-                            >
-                              {icon}
-                            </Button>
-                          </Tooltip>
-                        ))}
+                        {logicGateComponents.map(
+                          ({ icon, id, displayName }) => (
+                            <Tooltip label={displayName} key={id}>
+                              <Button
+                                variant="secondary"
+                                onMouseDown={() => setNodeToAdd(id)}
+                              >
+                                {icon}
+                              </Button>
+                            </Tooltip>
+                          )
+                        )}
                       </div>
                     </div>
 
                     <div className="flex flex-col">
                       <Title content="Advanced" variant="small" />
                       <div className="flex flex-wrap items-start justify-start gap-1">
-                        {(
-                          [
-                            {
-                              name: "Multiplexer",
-                              tooltipLabel: "Multiplexer",
-                              type: nodeTypes.Multiplexer,
-                              icon: (
-                                <img
-                                  draggable={false}
-                                  src={multiplexerIcon}
-                                  style={{ width: styleConstants.nodeIconSize }}
-                                />
-                              ),
-                            },
-                            {
-                              name: "Demultiplexer",
-                              tooltipLabel: "Demultiplexer",
-                              type: nodeTypes.Demultiplexer,
-                              icon: (
-                                <img
-                                  draggable={false}
-                                  src={demultiplexerIcon}
-                                  style={{ width: styleConstants.nodeIconSize }}
-                                />
-                              ),
-                            },
-                            {
-                              name: "DFlipFlop",
-                              tooltipLabel: "D Flip-Flop",
-                              type: nodeTypes.DFlipFlop,
-                              icon: (
-                                <img
-                                  draggable={false}
-                                  src={dFlipFlopIcon}
-                                  style={{ width: styleConstants.nodeIconSize }}
-                                />
-                              ),
-                            },
-                            {
-                              name: "FullAdder",
-                              tooltipLabel: "Full Adder",
-                              type: nodeTypes.FullAdder,
-                              icon: (
-                                <img
-                                  draggable={false}
-                                  src={fullAdderIcon}
-                                  style={{ width: styleConstants.nodeIconSize }}
-                                />
-                              ),
-                            },
-                          ] as const
-                        ).map(({ icon, name, tooltipLabel }) => (
-                          <Tooltip label={tooltipLabel} key={name}>
+                        {advancedComponents.map(({ icon, id, displayName }) => (
+                          <Tooltip label={displayName} key={id}>
                             <Button
                               variant="secondary"
-                              onClick={() => addNode(name)}
-                              onMouseDown={() => hanldeMouseDown(name)}
+                              onMouseDown={() => setNodeToAdd(id)}
                             >
                               {icon}
                             </Button>

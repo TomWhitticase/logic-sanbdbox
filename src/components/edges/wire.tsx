@@ -8,7 +8,7 @@ import {
   useNodesData,
 } from "@xyflow/react";
 import React from "react";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { NodeData } from "../../types/node-data";
 
 const adjustPositionForRotation = (

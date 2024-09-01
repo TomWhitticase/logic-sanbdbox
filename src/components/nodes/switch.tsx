@@ -1,13 +1,13 @@
 import { Node, NodeProps, Position } from "@xyflow/react";
 import { PiToggleLeft, PiToggleRightFill } from "react-icons/pi";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { NodeData } from "../../types/node-data";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
 
-const Switch = (props: NodeProps<Node<NodeData>>) => {
+const Switch: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id, data } = props;
 
   const switchValue =

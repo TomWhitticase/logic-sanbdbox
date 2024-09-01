@@ -1,7 +1,6 @@
-import { Node, NodeProps, Position } from "@xyflow/react";
-import React from "react";
+import { NodeProps, Position, Node } from "@xyflow/react";
 import { IoBulbOutline } from "react-icons/io5";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { useInputValue } from "../../hooks/use-target-handle-values";
 import { NodeData } from "../../types/node-data";
 import { Container } from "../common/container";

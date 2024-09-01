@@ -1,14 +1,15 @@
 import { Node, NodeProps, Position } from "@xyflow/react";
 import React, { useEffect } from "react";
 import { TbLogicNor } from "react-icons/tb";
-import { styleConstants } from "../../constants/styleConstants";
+import { styleConstants } from "../../constants/style-constants";
 import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
+import { NodeData } from "../../types/node-data";
 
-const Nor: React.FC<NodeProps<Node>> = (props) => {
+const Nor: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id } = props;
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
