@@ -1,7 +1,9 @@
 export const styleConstants = {
-  nodeIconSize: 30,
+  nodeIconSize: 28,
   handleConnectorWidth: 10,
-  activeColor: "orange",
-  inactiveColor: "black",
-  disabledColor: "gray",
+  activeColor: "#34d399",
+  inactiveColor: "#475569",
+  disabledColor: "#334155",
+  lampColor: "#fbbf24",
+  ledColor: "#ff4d5e",
 };

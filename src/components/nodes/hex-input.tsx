@@ -1,36 +1,25 @@
 import { Node, NodeProps, Position, useReactFlow } from "@xyflow/react";
 import React from "react";
 import { NodeData } from "../../types/node-data";
-import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
 
-const getSourceHanldeValuesFromHexString = (value: string) => {
-  const map: Record<string, [boolean, boolean, boolean, boolean]> = {
-    "0": [false, false, false, false],
-    "1": [false, false, false, true],
-    "2": [false, false, true, false],
-    "3": [false, false, true, true],
-    "4": [false, true, false, false],
-    "5": [false, true, false, true],
-    "6": [false, true, true, false],
-    "7": [false, true, true, true],
-    "8": [true, false, false, false],
-    "9": [true, false, false, true],
-    A: [true, false, true, false],
-    B: [true, false, true, true],
-    C: [true, true, false, false],
-    D: [true, true, false, true],
-    E: [true, true, true, false],
-    F: [true, true, true, true],
-  };
-  const valuesArray = map[value] ?? [false, false, false, false];
-  return [
-    { id: "outputA", value: valuesArray[0] },
-    { id: "outputB", value: valuesArray[1] },
-    { id: "outputC", value: valuesArray[2] },
-    { id: "outputD", value: valuesArray[3] },
-  ];
+const hexDigits = "0123456789ABCDEF";
+
+// outputA is the most significant bit
+const bits = [
+  { id: "outputA", weight: 8 },
+  { id: "outputB", weight: 4 },
+  { id: "outputC", weight: 2 },
+  { id: "outputD", weight: 1 },
+];
+
+const getSourceHandleValuesFromHexString = (value: string) => {
+  const number = Math.max(0, hexDigits.indexOf(value));
+  return bits.map((bit) => ({
+    id: bit.id,
+    value: (number & bit.weight) !== 0,
+  }));
 };
 
 const HexInput: React.FC<
@@ -48,66 +37,65 @@ const HexInput: React.FC<
 
   const inputValue = data.inputValue || "";
 
-  const handleInputChange = (InputValue: string) => {
-    const value = InputValue[InputValue.length - 1] ?? "";
-    if (!value.match(/[0-9A-Fa-f]/)) return;
-    updateNodeData(id, () => ({
-      inputValue: value.toUpperCase(),
-      sourceHandleValues: getSourceHanldeValuesFromHexString(
-        value.toUpperCase()
-      ),
-    }));
+  const setValue = (value: string) => {
+    const digit = value.toUpperCase();
+    if (!hexDigits.includes(digit) || digit.length !== 1) return;
+    updateNodeData(id, {
+      inputValue: digit,
+      sourceHandleValues: getSourceHandleValuesFromHexString(digit),
+    });
   };
 
-  const outputStates = data.sourceHandleValues.map((h) => h.value);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    e.preventDefault();
+    const current = Math.max(0, hexDigits.indexOf(inputValue));
+    const next = (current + (e.key === "ArrowUp" ? 1 : 15)) % 16;
+    setValue(hexDigits[next]);
+  };
+
+  const outputStates = bits.map(
+    (bit) =>
+      data.sourceHandleValues?.find((h) => h.id === bit.id)?.value ?? false
+  );
 
   return (
     <NodeWrapper {...props}>
-      <div className="flex">
-        <Container>
-          <div className="p-1">
-            <input
-              className="flex items-center justify-center w-12 h-12 text-2xl font-bold text-center border-2 border-black rounded"
-              value={inputValue}
-              type="string"
-              onChange={({ target }) => handleInputChange(target.value)}
-            />
-          </div>
-        </Container>
-        <div className="relative flex flex-col">
-          <div className="absolute top-[20%]">
-            <NodeHandle
-              state={outputStates[0]}
-              type="source"
-              position={Position.Right}
-              id="outputA"
-            />
-          </div>
-          <div className="absolute top-[40%]">
-            <NodeHandle
-              state={outputStates[1]}
-              type="source"
-              position={Position.Right}
-              id="outputB"
-            />
-          </div>
-          <div className="absolute top-[60%]">
-            <NodeHandle
-              state={outputStates[2]}
-              type="source"
-              position={Position.Right}
-              id="outputC"
-            />
-          </div>
-          <div className="absolute top-[80%]">
-            <NodeHandle
-              state={outputStates[3]}
-              type="source"
-              position={Position.Right}
-              id="outputD"
-            />
-          </div>
-        </div>
+      <div className="node-card flex-row w-[84px] h-[92px] pl-2 pr-5">
+        <input
+          className="nodrag w-full h-[72px] rounded-lg bg-black/60 border border-white/5 text-center font-mono text-4xl font-bold text-emerald-300 caret-emerald-300 placeholder:text-emerald-300/30 outline-none focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/20 [text-shadow:0_0_12px_rgba(52,211,153,0.7)]"
+          value={inputValue}
+          placeholder="0"
+          type="text"
+          inputMode="text"
+          maxLength={2}
+          aria-label="Hex digit"
+          title="Type 0-F or use the arrow keys"
+          onFocus={(e) => e.target.select()}
+          onKeyDown={handleKeyDown}
+          onChange={({ target }) => setValue(target.value.slice(-1))}
+        />
+        {bits.map((bit, i) => {
+          const top = `${20 + i * 20}%`;
+          return (
+            <React.Fragment key={bit.id}>
+              <div className="absolute right-0" style={{ top }}>
+                <NodeHandle
+                  state={outputStates[i]}
+                  type="source"
+                  position={Position.Right}
+                  id={bit.id}
+                />
+              </div>
+              <span
+                className="absolute font-mono text-[7px] leading-none -translate-y-1/2 right-[7px] text-slate-500 pointer-events-none"
+                style={{ top }}
+              >
+                {bit.weight}
+              </span>
+            </React.Fragment>
+          );
+        })}
       </div>
     </NodeWrapper>
   );

@@ -10,6 +10,9 @@ import { Container } from "../common/container";
 import NodeHandle from "../handles/node-handle";
 import NodeWrapper from "./node-wrapper";
 
+const minPeriod = 100;
+const periodStep = 100;
+
 const Clock: React.FC<
   NodeProps<Node<NodeData & { intervalPeriod?: number }>>
 > = (props) => {
@@ -17,32 +20,39 @@ const Clock: React.FC<
 
   const { updateNodeData } = useReactFlow();
 
-  const input = useInputValue("input");
-  const isOn = !input;
+  // A true signal on the input pauses the clock
+  const paused = useInputValue("input");
+  const running = !paused;
 
   const intervalPeriod = data.intervalPeriod || 1000;
 
   const { updateSourceHandleValue } = useUpdateSourceHandleValues(id);
 
   const outputValue =
-    data.sourceHandleValues.find((v) => v.id === "output")?.value ?? false;
+    data.sourceHandleValues?.find((v) => v.id === "output")?.value ?? false;
 
   useEffect(() => {
-    if (!isOn) {
+    if (!running) {
       updateSourceHandleValue("output", false);
       return;
     }
-    const intervalId = setInterval(() => {
+    const timeoutId = setTimeout(() => {
       updateSourceHandleValue("output", !outputValue);
     }, intervalPeriod);
 
-    return () => clearInterval(intervalId);
-  }, [id, outputValue, intervalPeriod, isOn]);
+    return () => clearTimeout(timeoutId);
+  }, [outputValue, intervalPeriod, running, updateSourceHandleValue]);
+
+  const setPeriod = (period: number) =>
+    updateNodeData(id, { intervalPeriod: Math.max(minPeriod, period) });
+
+  const stepButton =
+    "nodrag flex items-center justify-center w-5 h-5 rounded-md bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white transition-colors";
 
   return (
     <NodeWrapper {...props}>
       <NodeHandle
-        state={input}
+        state={paused}
         type="target"
         position={Position.Left}
         id="input"
@@ -54,43 +64,43 @@ const Clock: React.FC<
         id="output"
       />
       <Container>
-        <div className="flex flex-col items-center justify-center">
-          <FiClock
-            size={styleConstants.nodeIconSize}
-            color={
-              isOn
-                ? outputValue
-                  ? styleConstants.activeColor
-                  : styleConstants.inactiveColor
-                : styleConstants.disabledColor
-            }
-          />
-          <div className="flex items-center justify-center gap-1">
-            <button
-              onClick={() =>
-                updateNodeData(id, () => ({
-                  intervalPeriod: intervalPeriod + 100,
-                }))
-              }
-              className="flex items-center justify-center w-4 h-4 border-2 rounded-md "
-            >
-              <FaPlus />
-            </button>
-            {intervalPeriod}
-            <button
-              onClick={() =>
-                updateNodeData(id, () => ({
-                  intervalPeriod:
-                    intervalPeriod > 100
-                      ? intervalPeriod - 100
-                      : intervalPeriod,
-                }))
-              }
-              className="flex items-center justify-center w-4 h-4 border-2 rounded-md"
-            >
-              <FaMinus />
-            </button>
-          </div>
+        <FiClock
+          size={styleConstants.nodeIconSize}
+          color={
+            running
+              ? outputValue
+                ? styleConstants.activeColor
+                : "#e2e8f0"
+              : styleConstants.disabledColor
+          }
+          style={
+            running && outputValue
+              ? { filter: `drop-shadow(0 0 6px ${styleConstants.activeColor})` }
+              : undefined
+          }
+        />
+        <div className="flex items-center justify-center gap-1.5">
+          <button
+            type="button"
+            aria-label="Faster"
+            onClick={() => setPeriod(intervalPeriod - periodStep)}
+            className={stepButton}
+          >
+            <FaMinus size={8} />
+          </button>
+          <span className="font-mono text-[10px] text-slate-300 tabular-nums w-10 text-center">
+            {intervalPeriod >= 1000
+              ? `${(intervalPeriod / 1000).toFixed(1)}s`
+              : `${intervalPeriod}ms`}
+          </span>
+          <button
+            type="button"
+            aria-label="Slower"
+            onClick={() => setPeriod(intervalPeriod + periodStep)}
+            className={stepButton}
+          >
+            <FaPlus size={8} />
+          </button>
         </div>
       </Container>
     </NodeWrapper>

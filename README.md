@@ -1,54 +1,34 @@
 # Logic Sandbox
 
-A Web app for building circuits out of logic gates
+A web app for building and simulating digital logic circuits. Drag in switches, gates, flip-flops and displays, wire them together and watch the signals flow in real time.
 
-# React + TypeScript + Vite
+## Features
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- **Inputs:** switch, momentary push button, adjustable clock, hex digit input
+- **Outputs:** bulb, square light, seven segment display, hex display
+- **Logic gates:** buffer, NOT, AND, NAND, OR, NOR, XOR, XNOR
+- **Advanced:** 4:1 multiplexer, 1:4 demultiplexer, D flip-flop, full adder
+- Built-in example circuits (half adder, 4-bit ripple counter, blinker, hex decoder)
+- Rotate, duplicate, cut, copy and paste components
+- Autosaves to the browser; save and open circuits as JSON files
 
-Currently, two official plugins are available:
+## Shortcuts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Action                    | Shortcut                  |
+| ------------------------- | ------------------------- |
+| Select several components | Shift + drag              |
+| Select everything         | Ctrl/⌘ + A                |
+| Copy / cut / paste        | Ctrl/⌘ + C / X / V        |
+| Delete the selection      | Delete or Backspace       |
+| Component options         | Right click a component   |
 
-## Expanding the ESLint configuration
+## Development
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+```sh
+npm install
+npm run dev     # start the dev server
+npm run build   # type-check and build for production
+npm run lint
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
-```
+Built with React, TypeScript, Vite, Tailwind CSS and [React Flow](https://reactflow.dev).

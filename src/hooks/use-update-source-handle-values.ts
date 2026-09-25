@@ -1,25 +1,22 @@
 import { useReactFlow } from "@xyflow/react";
+import { useCallback } from "react";
+import { scheduleSourceHandleValues } from "../simulation/scheduler";
+import { SourceHandleValues } from "../types/node-data";
 
 export const useUpdateSourceHandleValues = (nodeId: string) => {
-  const { updateNodeData } = useReactFlow();
+  const { setNodes } = useReactFlow();
 
-  const updateAllSourceHandleValues = (
-    sourceHandleValues: { id: string; value: boolean }[]
-  ) => {
-    updateNodeData(nodeId, () => ({
-      sourceHandleValues,
-    }));
-  };
+  const updateAllSourceHandleValues = useCallback(
+    (sourceHandleValues: SourceHandleValues) =>
+      scheduleSourceHandleValues(setNodes, nodeId, sourceHandleValues),
+    [setNodes, nodeId]
+  );
 
-  const updateSourceHandleValue = (id: string, value: boolean) => {
-    console.log("Updating node data", nodeId, id, value);
-    updateNodeData(nodeId, (node) => {
-      return {
-        ...node.data,
-        sourceHandleValues: [{ id, value }],
-      };
-    });
-  };
+  const updateSourceHandleValue = useCallback(
+    (id: string, value: boolean) =>
+      scheduleSourceHandleValues(setNodes, nodeId, [{ id, value }]),
+    [setNodes, nodeId]
+  );
 
   return { updateAllSourceHandleValues, updateSourceHandleValue };
 };

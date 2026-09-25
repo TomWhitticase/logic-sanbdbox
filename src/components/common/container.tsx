@@ -1,15 +1,26 @@
 import React from "react";
-type VariantType = "default" | "menu" | "no-padding";
+
+type VariantType = "default" | "no-padding";
 type Props = {
   children: React.ReactNode;
   variant?: VariantType;
+  label?: string;
+  className?: string;
 };
-export const Container = ({ children, variant = "default" }: Props) => {
-  const variantStyles: Record<VariantType, string> = {
-    default: "flex flex-col gap-2 bg-white border-2 rounded-md p-1",
-    "no-padding": "flex flex-col gap-2 bg-white border-2 rounded-md p-0",
-    menu: "flex flex-col bg-white border-2 rounded-md p-1",
-  };
 
-  return <div className={`${variantStyles[variant]}`}>{children}</div>;
-};
+/** The visual body of a node on the canvas */
+export const Container = ({
+  children,
+  variant = "default",
+  label,
+  className = "",
+}: Props) => (
+  <div
+    className={`node-card ${
+      variant === "default" ? "px-2.5 py-2" : ""
+    } ${className}`}
+  >
+    {children}
+    {label && <span className="node-label">{label}</span>}
+  </div>
+);

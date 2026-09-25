@@ -1,86 +1,57 @@
 import { Node, NodeProps, Position } from "@xyflow/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import dFlipFlopIcon from "../../assets/d-flip-flop-icon.svg";
-import { styleConstants } from "../../constants/style-constants";
 import { useInputValue } from "../../hooks/use-target-handle-values";
 import { useUpdateSourceHandleValues } from "../../hooks/use-update-source-handle-values";
 import { NodeData } from "../../types/node-data";
-import { Container } from "../common/container";
-import NodeHandle from "../handles/node-handle";
+import { Chip } from "./chip";
 import NodeWrapper from "./node-wrapper";
 
 const DFlipFlop: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id, data } = props;
   const { updateAllSourceHandleValues } = useUpdateSourceHandleValues(id);
 
-  const q = data.sourceHandleValues.find((h) => h.id === "q")?.value ?? false;
-  const qNot =
-    data.sourceHandleValues.find((h) => h.id === "qNot")?.value ?? false;
+  const storedQ = data.sourceHandleValues?.find((h) => h.id === "q");
+  const q = storedQ?.value ?? false;
 
   const dataIn = useInputValue("dataIn");
   const clockIn = useInputValue("clock");
 
+  // Capture D only on a rising clock edge
+  const previousClock = useRef(clockIn);
   useEffect(() => {
-    if (clockIn) {
+    const risingEdge = clockIn && !previousClock.current;
+    previousClock.current = clockIn;
+    if (risingEdge) {
       updateAllSourceHandleValues([
         { id: "q", value: dataIn },
         { id: "qNot", value: !dataIn },
       ]);
     }
-  }, [clockIn]);
+  }, [clockIn, dataIn, updateAllSourceHandleValues]);
 
-  // esnure that the initial values are set correctly
+  // A fresh flip-flop starts reset: Q = 0, Q' = 1
   useEffect(() => {
-    if (q === qNot) {
+    if (!storedQ) {
       updateAllSourceHandleValues([
-        { id: "q", value: q },
-        { id: "qNot", value: qNot },
+        { id: "q", value: false },
+        { id: "qNot", value: true },
       ]);
     }
-  }, []);
+  }, [storedQ, updateAllSourceHandleValues]);
 
   return (
     <NodeWrapper {...props}>
-      <Container variant="no-padding">
-        <div className="relative flex flex-col items-center justify-center w-14 h-14">
-          <div className="absolute top-[35%] left-0">
-            <NodeHandle
-              state={dataIn}
-              type="target"
-              position={Position.Left}
-              id="dataIn"
-            />
-          </div>
-          <div className="absolute bottom-[35%] left-0">
-            <NodeHandle
-              state={clockIn}
-              type="target"
-              position={Position.Left}
-              id="clock"
-            />
-          </div>
-          <div className="absolute top-[35%] right-0">
-            <NodeHandle
-              state={q}
-              type="source"
-              position={Position.Right}
-              id="q"
-            />
-          </div>
-          <div className="absolute bottom-[35%] right-0">
-            <NodeHandle
-              state={qNot}
-              type="source"
-              position={Position.Right}
-              id="qNot"
-            />
-          </div>
-          <img
-            src={dFlipFlopIcon}
-            style={{ width: styleConstants.nodeIconSize }}
-          />
-        </div>
-      </Container>
+      <Chip
+        iconSrc={dFlipFlopIcon}
+        label="D FF"
+        pins={[
+          { id: "dataIn", type: "target", side: Position.Left, at: 35, state: dataIn, label: "D" },
+          { id: "clock", type: "target", side: Position.Left, at: 65, state: clockIn, label: "CLK" },
+          { id: "q", type: "source", side: Position.Right, at: 35, state: q, label: "Q" },
+          { id: "qNot", type: "source", side: Position.Right, at: 65, state: !q, label: "Q'" },
+        ]}
+      />
     </NodeWrapper>
   );
 };
