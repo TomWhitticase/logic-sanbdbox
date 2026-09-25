@@ -1,5 +1,6 @@
 import { Edge, Node } from "@xyflow/react";
 import saveAs from "file-saver";
+import { savedCircuitSchema } from "../types/saved-circuit";
 
 // File System Access API types
 interface FilePickerAcceptType {
@@ -28,73 +29,93 @@ declare global {
   }
 }
 
+const fileName = "logic-sandbox-circuit.json";
+const fileTypes: FilePickerAcceptType[] = [
+  {
+    description: "Logic Sandbox circuit",
+    accept: { "application/json": [".json"] },
+  },
+];
+
+const isAbortError = (error: unknown) =>
+  (error as Error | undefined)?.name === "AbortError";
+
+/** Resolves to true once saved, false if the user cancelled */
 export const saveToDevice = async (dataToSave: {
   nodes: Node[];
   edges: Edge[];
 }) => {
-  const jsonString = JSON.stringify(dataToSave);
+  const nodes = dataToSave.nodes.map((node) => ({
+    ...node,
+    selected: false,
+    dragging: false,
+  }));
+  const jsonString = JSON.stringify({ ...dataToSave, nodes }, null, 2);
   const blob = new Blob([jsonString], { type: "application/json" });
 
+  if (!window.showSaveFilePicker) {
+    saveAs(blob, fileName);
+    return true;
+  }
+
   try {
-    if (!window.showSaveFilePicker) {
-      throw new Error(
-        "File System Access API is not supported in this browser."
-      );
-    }
-
     const fileHandle = await window.showSaveFilePicker({
-      suggestedName: "logic-sandbox-circuit.json",
-      types: [
-        {
-          description: "JSON Files",
-          accept: { "application/json": [".json"] },
-        },
-      ],
+      suggestedName: fileName,
+      types: fileTypes,
     });
-
     const writableStream = await fileHandle.createWritable();
     await writableStream.write(blob);
     await writableStream.close();
+    return true;
   } catch (error) {
-    if ((error as Error).name === "AbortError") {
-      return;
-    }
-    console.error("Error saving file:", error);
-    // Fallback to file-saver if File System Access API is not supported
-    saveAs(blob, "flow-data.json");
+    if (isAbortError(error)) return false;
+    console.error("Error saving file, falling back to download:", error);
+    saveAs(blob, fileName);
+    return true;
   }
 };
 
+/** Opens a file with a classic <input type="file"> for browsers without the File System Access API */
+const pickFileWithInput = () =>
+  new Promise<File | null>((resolve) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,application/json";
+    input.addEventListener("change", () => resolve(input.files?.[0] ?? null));
+    input.addEventListener("cancel", () => resolve(null));
+    input.click();
+  });
+
+const pickFile = async () => {
+  if (!window.showOpenFilePicker) return pickFileWithInput();
+  const [fileHandle] = await window.showOpenFilePicker({
+    types: fileTypes,
+    excludeAcceptAllOption: true,
+    multiple: false,
+  });
+  return fileHandle.getFile();
+};
+
+/**
+ * Resolves to the circuit, or undefined if the user cancelled.
+ * Throws if the file isn't a valid circuit.
+ */
 export const loadFromDevice = async () => {
+  let file: File | null;
   try {
-    if (!window.showOpenFilePicker) {
-      throw new Error(
-        "File System Access API is not supported in this browser."
-      );
-    }
-
-    const options = {
-      types: [
-        {
-          description: "JSON Files",
-
-          accept: { "application/json": [".json"] },
-        },
-      ],
-      excludeAcceptAllOption: true,
-      multiple: false,
-    };
-
-    const [fileHandle] = await window.showOpenFilePicker(options);
-    const file = await fileHandle.getFile();
-    const fileContent = await file.text();
-    const data = JSON.parse(fileContent);
-
-    return { nodes: data.nodes, edges: data.edges };
+    file = await pickFile();
   } catch (error) {
-    if ((error as Error).name === "AbortError") {
-      return;
-    }
-    console.error("Error opening file:", error);
+    if (isAbortError(error)) return;
+    throw error;
   }
+  if (!file) return;
+
+  const parsed = savedCircuitSchema.safeParse(JSON.parse(await file.text()));
+  if (!parsed.success) {
+    throw new Error("That file doesn't look like a Logic Sandbox circuit.");
+  }
+  return {
+    nodes: parsed.data.nodes as Node[],
+    edges: parsed.data.edges as Edge[],
+  };
 };

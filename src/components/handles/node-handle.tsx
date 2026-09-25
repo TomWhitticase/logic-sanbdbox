@@ -1,18 +1,20 @@
 import { Handle, HandleProps } from "@xyflow/react";
-import { styleConstants } from "../../constants/style-constants";
+import { useIsPreview } from "../common/preview-context";
 
-const NodeHandle = (props: HandleProps & { state: boolean }) => {
-  return (
-    <Handle
-      style={{
-        backgroundColor: props.state
-          ? styleConstants.activeColor
-          : styleConstants.inactiveColor,
-        width: styleConstants.handleConnectorWidth,
-        height: styleConstants.handleConnectorWidth,
-      }}
-      {...props}
-    />
-  );
+type Props = HandleProps & { state?: boolean };
+
+const NodeHandle = ({ state, className, ...props }: Props) => {
+  const isPreview = useIsPreview();
+  const classes = `logic-handle ${state ? "on" : ""} ${className ?? ""}`;
+
+  if (isPreview) {
+    return (
+      <div
+        className={`react-flow__handle react-flow__handle-${props.position} ${classes}`}
+      />
+    );
+  }
+
+  return <Handle className={classes} {...props} />;
 };
 export default NodeHandle;
