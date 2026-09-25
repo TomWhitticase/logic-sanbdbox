@@ -9,7 +9,7 @@ export const NodeWrapper: React.FC<
   return (
     <div
       style={{
-        transform: `rotate(${data.rotation}deg)`,
+        transform: `rotate(${(data.rotation as number) || 0}deg)`,
       }}
     >
       {children}

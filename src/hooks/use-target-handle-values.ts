@@ -1,31 +1,20 @@
 import { useHandleConnections, useNodesData } from "@xyflow/react";
+import { SourceHandleValues } from "../types/node-data";
 
-export const useInputValue = (
-  hanldeId: string | undefined,
-  nodeId?: string
-) => {
+/**
+ * Returns the logic level on one of the current node's input handles.
+ * Several wires on the same input behave like a wired-OR.
+ */
+export const useInputValue = (handleId: string) => {
   const connections = useHandleConnections({
     type: "target",
-    id: nodeId ?? hanldeId,
+    id: handleId,
   });
   const connectedNodes = useNodesData(connections.map((c) => c.source));
 
-  const connectedHandles = connections.map((c) => ({
-    sourceHandle: c.sourceHandle,
-    targetHandle: c.targetHandle,
-    node: c.source,
-    value: (() => {
-      try {
-        return (
-          connectedNodes.find((n) => n.id === c.source)?.data
-            .sourceHandleValues as { id: string; value: boolean }[]
-        ).find((h) => h.id === c.sourceHandle)?.value;
-      } catch (error) {
-        console.log("Could not get value for handle:", c.sourceHandle, error);
-        return false;
-      }
-    })(),
-  }));
-
-  return connectedHandles.map((h) => h.value || false).some((v) => v);
+  return connections.some((c) => {
+    const values = connectedNodes.find((n) => n.id === c.source)?.data
+      ?.sourceHandleValues as SourceHandleValues | undefined;
+    return values?.find((h) => h.id === c.sourceHandle)?.value ?? false;
+  });
 };

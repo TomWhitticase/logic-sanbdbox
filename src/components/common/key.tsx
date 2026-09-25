@@ -1,27 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+
+const isMac =
+  typeof navigator !== "undefined" &&
+  /mac|iphone|ipad/i.test(navigator.userAgent);
+
+const keyLabels = {
+  copy: "C",
+  cut: "X",
+  paste: "V",
+  selectAll: "A",
+};
+
 type Props = {
-  keyboardKey: "copy" | "cut" | "paste";
+  keyboardKey: keyof typeof keyLabels;
 };
-const Key: React.FC<Props> = ({ keyboardKey }) => {
-  const [isMac, setIsMac] = useState(false);
 
-  useEffect(() => {
-    const userAgentData = navigator.userAgent;
-    setIsMac(userAgentData.toLocaleLowerCase().includes("mac"));
-  }, []);
-
-  const prefix = isMac ? "⌘" : "Ctrl";
-
-  const text = `${prefix} ${
-    {
-      copy: "C",
-      cut: "X",
-      paste: "V",
-    }[keyboardKey]
-  }`;
-
-  return (
-    <kbd className="px-1 mx-1 rounded bg-slate-200 text-nowrap">{text}</kbd>
-  );
-};
+/** A platform aware keyboard shortcut, e.g. ⌘ C or Ctrl C */
+const Key: React.FC<Props> = ({ keyboardKey }) => (
+  <kbd className="kbd">
+    {isMac ? "⌘" : "Ctrl"} {keyLabels[keyboardKey]}
+  </kbd>
+);
 export default Key;

@@ -1,12 +1,16 @@
 import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
-import { useCallback } from "react";
-import { FaArrowRotateLeft, FaArrowRotateRight } from "react-icons/fa6";
-import { IoDuplicateOutline } from "react-icons/io5";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { TbHelp, TbUnlink } from "react-icons/tb";
+import { useCallback, useEffect } from "react";
+import {
+  LuCopy,
+  LuInfo,
+  LuRotateCcw,
+  LuRotateCw,
+  LuTrash2,
+  LuUnlink,
+} from "react-icons/lu";
 import { useSearchParams } from "react-router-dom";
-import { Button } from "../common/button";
-import { Container } from "../common/container";
+import { isNodeType, nodeDefinitions } from "../../constants/node-types";
+import { MenuItem, MenuSeparator } from "../common/menu-item";
 
 export type NodeContextMenuProps = {
   id: string;
@@ -16,6 +20,7 @@ export type NodeContextMenuProps = {
   bottom: number | undefined;
   closeMenu: () => void;
 };
+
 const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
   id,
   top,
@@ -24,118 +29,102 @@ const NodeContextMenu: React.FC<NodeContextMenuProps> = ({
   bottom,
   closeMenu,
 }) => {
-  const { getNode, setNodes, addNodes, setEdges, updateNode } = useReactFlow();
-  const searchParamsHook = useSearchParams();
-  const setSearchParams = searchParamsHook[1];
+  const { getNode, setNodes, addNodes, setEdges, updateNodeData, deleteElements } =
+    useReactFlow();
+  const [, setSearchParams] = useSearchParams();
   const updateNodeInternals = useUpdateNodeInternals();
   const node = getNode(id);
 
-  const duplicateNode = useCallback(() => {
-    if (!node) {
-      console.error(`Node with id ${id} not found`);
-      return;
-    }
-    const position = {
-      x: node!.position.x + 5,
-      y: node!.position.y + 5,
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMenu();
     };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [closeMenu]);
 
+  const duplicateNode = useCallback(() => {
+    if (!node) return;
+    setNodes((nodes) =>
+      nodes.map((n) => (n.selected ? { ...n, selected: false } : n))
+    );
     addNodes({
       ...node,
-      id: `${node.id}-${Date.now()}`,
-      data: { value: false, rotation: 0, sourceHandleValues: [] },
-      position,
+      id: `${node.type}-${Date.now().toString(36)}`,
+      // Keep settings like rotation and clock speed, not the live outputs
+      data: { ...node.data, sourceHandleValues: [] },
+      position: { x: node.position.x + 30, y: node.position.y + 30 },
+      selected: true,
+      dragging: false,
     });
-  }, [id, getNode, addNodes, node]);
+    closeMenu();
+  }, [node, addNodes, setNodes, closeMenu]);
 
   const deleteNode = useCallback(() => {
-    setNodes((nodes) => nodes.filter((node) => node.id !== id));
-    setEdges((edges) => edges.filter((edge) => edge.source !== id));
+    deleteElements({ nodes: [{ id }] });
     closeMenu();
-  }, [id, setNodes, setEdges]);
+  }, [id, deleteElements, closeMenu]);
 
   const disconnectEdges = useCallback(() => {
-    // remove source edges
     setEdges((edges) =>
       edges.filter((edge) => edge.target !== id && edge.source !== id)
     );
-  }, [id, setEdges]);
+    closeMenu();
+  }, [id, setEdges, closeMenu]);
 
   const rotate = useCallback(
     (degrees: number) => {
-      updateNode(id, (node) => {
-        let newRotation = ((node.data.rotation || 0) as number) + degrees;
-        if (newRotation >= 360) {
-          newRotation -= 360;
-        } else if (newRotation < 0) {
-          newRotation += 360;
-        }
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            rotation: newRotation,
-          },
-        };
-      });
-      updateNodeInternals(id);
+      const current = (getNode(id)?.data.rotation as number) || 0;
+      updateNodeData(id, { rotation: (((current + degrees) % 360) + 360) % 360 });
+      // Handle positions are measured from the DOM, so re-measure after render
+      requestAnimationFrame(() => updateNodeInternals(id));
     },
-
-    [updateNode, id, updateNodeInternals]
+    [id, getNode, updateNodeData, updateNodeInternals]
   );
 
   const handleHelpClicked = () => {
-    setSearchParams({ help: node?.type ?? "" });
+    setSearchParams({ help: node?.type ?? "about" });
     closeMenu();
   };
 
+  const title = isNodeType(node?.type)
+    ? nodeDefinitions[node.type].displayName
+    : "Component";
+
   return (
     <div
-      style={{
-        top,
-        left,
-        right,
-        bottom,
-        zIndex: 1000,
-        position: "absolute",
-        boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-      }}
+      role="menu"
+      className="absolute z-[1000] w-56 p-1.5 glass rounded-xl animate-pop-in"
+      style={{ top, left, right, bottom }}
+      onContextMenu={(e) => e.preventDefault()}
     >
-      <Container variant="menu">
-        <Button variant="menu" onClick={() => handleHelpClicked()}>
-          <div className="flex items-center gap-2">
-            <TbHelp /> Help
-          </div>
-        </Button>
-        <Button variant="menu" onClick={() => rotate(90)}>
-          <div className="flex items-center gap-2">
-            <FaArrowRotateRight /> Rotate 90°
-          </div>
-        </Button>
-        <Button variant="menu" onClick={() => rotate(-90)}>
-          <div className="flex items-center gap-2">
-            <FaArrowRotateLeft /> Rotate -90°
-          </div>
-        </Button>
-        <Button variant={"menu"} onClick={() => duplicateNode()}>
-          <div className="flex items-center gap-2">
-            <IoDuplicateOutline />
-            Duplicate
-          </div>
-        </Button>
-        <Button variant={"menu"} onClick={() => deleteNode()}>
-          <div className="flex items-center gap-2">
-            <RiDeleteBinLine />
-            Delete
-          </div>
-        </Button>
-        <Button variant={"menu"} onClick={() => disconnectEdges()}>
-          <div className="flex items-center gap-2">
-            <TbUnlink />
-            Remove connections
-          </div>
-        </Button>
-      </Container>
+      <div className="px-2.5 pt-1 pb-1.5 text-[10px] font-semibold tracking-[0.16em] uppercase text-slate-500">
+        {title}
+      </div>
+      <MenuItem icon={<LuRotateCw size={14} />} onClick={() => rotate(90)}>
+        Rotate right
+      </MenuItem>
+      <MenuItem icon={<LuRotateCcw size={14} />} onClick={() => rotate(-90)}>
+        Rotate left
+      </MenuItem>
+      <MenuItem icon={<LuCopy size={14} />} onClick={duplicateNode}>
+        Duplicate
+      </MenuItem>
+      <MenuItem icon={<LuUnlink size={14} />} onClick={disconnectEdges}>
+        Remove connections
+      </MenuItem>
+      <MenuItem icon={<LuInfo size={14} />} onClick={handleHelpClicked}>
+        How it works
+      </MenuItem>
+      <MenuSeparator />
+      <MenuItem
+        icon={<LuTrash2 size={14} />}
+        destructive
+        shortcut={<kbd className="kbd">Del</kbd>}
+        onClick={deleteNode}
+      >
+        Delete
+      </MenuItem>
     </div>
   );
 };
