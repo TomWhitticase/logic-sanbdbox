@@ -2,6 +2,12 @@
   "name": "logic-sandbox",
   "private": true,
   "version": "0.0.0",
+  "description": "Build and simulate digital logic circuits in your browser",
+  "homepage": "https://tomwhitticase.github.io/logic-sanbdbox/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TomWhitticase/logic-sanbdbox.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +16,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "@xyflow/react": "^12.1.0",
     "file-saver": "^2.0.5",
     "react": "^18.3.1",

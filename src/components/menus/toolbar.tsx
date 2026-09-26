@@ -9,7 +9,7 @@ import {
   LuSparkles,
 } from "react-icons/lu";
 import { useSearchParams } from "react-router-dom";
-import { examples } from "../../constants/examples";
+import { exampleLevels, examples } from "../../constants/examples";
 import { useLoadCircuit } from "../../hooks/use-load-circuit";
 import { useUiStore } from "../../stores/ui-store";
 import { loadFromDevice, saveToDevice } from "../../utils/save-and-open-utils";
@@ -43,24 +43,38 @@ export const ExamplesMenu = ({ onClose }: { onClose: () => void }) => {
   return (
     <div
       role="menu"
-      className="absolute right-0 p-1.5 mt-2 w-72 glass rounded-xl top-full animate-pop-in z-10"
+      className="absolute right-0 p-1.5 mt-2 w-80 glass rounded-xl top-full animate-pop-in z-10 max-h-[calc(100vh-80px)] overflow-y-auto"
     >
-      {examples.map((example) => (
-        <button
-          key={example.id}
-          type="button"
-          role="menuitem"
-          className="flex flex-col w-full px-3 py-2 text-left transition-colors rounded-lg hover:bg-white/[0.07]"
-          onClick={() => {
-            loadCircuit(example, { confirm: true, message: `Loaded “${example.name}”` });
-            onClose();
-          }}
-        >
-          <span className="text-[13px] font-medium text-slate-100">
-            {example.name}
-          </span>
-          <span className="text-xs text-slate-400">{example.description}</span>
-        </button>
+      {exampleLevels.map((level) => (
+        <div key={level}>
+          <div className="px-3 pt-2 pb-1 text-[10px] font-semibold tracking-[0.16em] uppercase text-slate-500">
+            {level}
+          </div>
+          {examples
+            .filter((example) => example.level === level)
+            .map((example) => (
+              <button
+                key={example.id}
+                type="button"
+                role="menuitem"
+                className="flex flex-col w-full px-3 py-2 text-left transition-colors rounded-lg hover:bg-white/[0.07]"
+                onClick={() => {
+                  loadCircuit(example, {
+                    confirm: true,
+                    message: `Loaded “${example.name}”`,
+                  });
+                  onClose();
+                }}
+              >
+                <span className="text-[13px] font-medium text-slate-100">
+                  {example.name}
+                </span>
+                <span className="text-xs text-slate-400">
+                  {example.description}
+                </span>
+              </button>
+            ))}
+        </div>
       ))}
     </div>
   );

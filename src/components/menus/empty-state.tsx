@@ -21,10 +21,12 @@ export const EmptyState = () => {
         </h2>
         <p className="mb-6 text-sm leading-relaxed text-slate-400">
           Drag components from the panel onto the canvas, then connect an
-          output to an input to wire them together. Or begin from an example:
+          output to an input to wire them together. Or start from an example (there are more in the toolbar):
         </p>
         <div className="flex flex-wrap justify-center gap-2 pointer-events-auto">
-          {examples.map((example) => (
+          {examples
+            .filter((example) => example.featured)
+            .map((example) => (
             <button
               key={example.id}
               type="button"
@@ -36,7 +38,7 @@ export const EmptyState = () => {
               <LuSparkles size={13} className="text-emerald-300" />
               {example.name}
             </button>
-          ))}
+            ))}
         </div>
       </div>
     </div>
